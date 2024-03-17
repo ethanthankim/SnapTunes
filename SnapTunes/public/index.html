@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Keyboard</title>
+    <link rel="stylesheet" href="./style.css" />
+    <button id="start" style="float: left">Start</button>
+    <div id="playContainer">
+      <button
+        id="playBTN"
+        onclick="playMelody(); switchButtons(true)"
+        type="button"
+      >
+        Play
+      </button>
+    </div>
+    <div id="icon">
+      <button
+        type="button"
+        value="piano"
+        onclick="getIcon(this.value)"
+        style="width: 100%"
+      >
+        Piano
+      </button>
+      <button
+        type="button"
+        value="guitar"
+        onclick="getIcon(this.value)"
+        style="width: 100%"
+      >
+        Guitar
+      </button>
+      <button
+        type="button"
+        value="bells"
+        onclick="getIcon(this.value)"
+        style="width: 100%"
+      >
+        Bells
+      </button>
+    </div>
+    <button id="connect">Connect</button>
+  </head>
+  <body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.js"></script>
+    <script src="Note.js"></script>
+    <script src="Track.js"></script>
+    <script src="functions.js"></script>
+    <script src="script.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+        var btn = document.getElementById('connect');
+        btn.addEventListener('click',function(){
+          socket.emit('music',getMelody());
+        });
+        socket.on('music',function(melody){
+          otherMelodies = otherMelodies.concat(melody);
+          console.log(otherMelodies);
+        });
+    </script>
+  </body>
+</html>
