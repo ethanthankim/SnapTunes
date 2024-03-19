@@ -99,4 +99,29 @@ function barLines(x, y, width, height, bars) {
       }
     }
   }
-  
+function switchButtons(isPlaying) {
+  var button = document.getElementById("playBTN");
+  if (isPlaying) {
+    button.setAttribute(`onclick`, `section.stop(); switchButtons(false)`);
+    button.innerHTML = "Stop";
+  } else {
+    button.setAttribute(`onclick`, `playMelody(); switchButtons(true)`);
+    button.innerHTML = "Play";
+  }
+}
+function shiftMelody(melody) {
+  // melody is array of Notes
+  // shift will return new melody in which each note's beat is shifted by two bars
+  // note.beat is a string "bar:beat"
+  let newMelody = [];
+  console.log(melody);
+  for (note of melody) {
+    var currentBeat = note.beat;
+    var newBar = parseInt(currentBeat[0]) + 2;
+    var newNote = new timeNote(note.note.slice(0,note.note.length-1),0,0,0,0,note.type,[]);
+    newNote.beat = newBar.toString() + ':' + currentBeat[currentBeat.length-1];
+    newMelody.push(newNote);
+  }
+  console.log(newMelody);
+  return newMelody;
+}

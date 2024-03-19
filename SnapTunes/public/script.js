@@ -165,16 +165,7 @@ function playMelody() {
   }, 5000);
 }
 
-function switchButtons(isPlaying) {
-  var button = document.getElementById("playBTN");
-  if (isPlaying) {
-    button.setAttribute(`onclick`, `section.stop(); switchButtons(false)`);
-    button.innerHTML = "Stop";
-  } else {
-    button.setAttribute(`onclick`, `playMelody(); switchButtons(true)`);
-    button.innerHTML = "Play";
-  }
-}
+
 
 
 

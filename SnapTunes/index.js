@@ -12,8 +12,11 @@ app.get('/',(req,res) => {
 
 io.on('connection', (socket) => {
     console.log('a user connected');
-    socket.on('music',(melody)=>{
-        io.emit('music',melody);
+    socket.on('Vsnap',(melody)=>{
+        io.emit('Vsnap',melody);
+    });
+    socket.on('Hsnap',(melody)=>{
+        io.emit('Hsnap',melody);
     });
     socket.on('disconnect',() => {
         console.log('user disconnected');

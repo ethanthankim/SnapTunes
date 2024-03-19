@@ -41,7 +41,9 @@
         Bells
       </button>
     </div>
-    <button id="connect">Connect</button>
+    <button id="Vconnect">Vertical Snap</button>
+    <button id="Hconnect">Horizontal Snap</button>
+    <button id="disconnect">UnSnap</button>
   </head>
   <body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
@@ -53,13 +55,21 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         var socket = io();
-        var btn = document.getElementById('connect');
-        btn.addEventListener('click',function(){
-          socket.emit('music',getMelody());
+        document.getElementById('Vconnect').addEventListener('click',function(){
+          socket.emit('Vsnap',getMelody());
         });
-        socket.on('music',function(melody){
+        document.getElementById('Hconnect').addEventListener('click',function(){
+          socket.emit('Hsnap',getMelody());
+        });
+        document.getElementById('disconnect').addEventListener('click',function(){
+          otherMelodies = [];
+        });
+        socket.on('Vsnap',function(melody){
           otherMelodies = otherMelodies.concat(melody);
           console.log(otherMelodies);
+        });
+        socket.on('Hsnap',function(melody){
+          otherMelodies = otherMelodies.concat(shiftMelody(melody));
         });
     </script>
   </body>
