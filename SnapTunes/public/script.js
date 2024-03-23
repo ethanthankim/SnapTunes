@@ -16,6 +16,7 @@ var colours = [255, 255, 255];
 var startBTN = document.getElementById("start");
 var synth = new Tone.PolySynth().toDestination();
 var snapped = false;
+var songSection=0;
 
 startBTN.addEventListener("click", function () {
   if (Tone.context.state != "running") {
@@ -23,8 +24,19 @@ startBTN.addEventListener("click", function () {
   }
 });
 
-function getMelody() {
-  return myMelody;
+function getMelody(isSnapped=false) {
+  if (isSnapped){
+    return snappedMelody;
+  }
+  else {
+    return myMelody;
+  }
+}
+function getSongSection() {
+  return songSection;
+}
+function setSongSection(n) {
+  songSection = n;
 }
 function getIcon(value) {
   if (value == "piano") {
@@ -130,43 +142,12 @@ function mouseReleased() {
     // setNote(tracks, note);
     note.setBeat(tracks);
     note.setNote(tracks);
+    myMelody.setScore();
     note.released();
   }
 }
 synth.sync();
 Tone.Transport.start();
-
-// function playMelody() {
-//   let score = [];
-//   for (var note of melody) {
-//     score.push({ time: note.beat, note: note.note, type: note.value });
-//   }
-//   section = new Tone.Part((time, section) => {
-//     synth.triggerAttackRelease(section.note, section.type, time);
-//   }, score);
-//   // start the transport to hear the notes
-//   section.start();
-//   switchButtons(true);
-//   setTimeout(function () {
-//     switchButtons(false);
-//   }, 5000);
-// }
-// function playMelody() {
-//   let newMelody = melody.concat(otherMelodies);
-//   let score = [];
-//   for (var note of newMelody) {
-//     score.push({ time: note.beat, note: note.note, type: note.value });
-//   }
-//   section = new Tone.Part((time, section) => {
-//     synth.triggerAttackRelease(section.note, section.type, time);
-//   }, score);
-//   // start the transport to hear the notes
-//   section.start();
-//   switchButtons(true);
-//   setTimeout(function () {
-//     switchButtons(false);
-//   }, 5000);
-// }
 
 
 

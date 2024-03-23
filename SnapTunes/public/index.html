@@ -9,7 +9,7 @@
     <div id="playContainer">
       <button
         id="playBTN"
-        onclick="playMelody(myMelody); switchButtons(true)"
+        onclick="playMelody(myMelody,snappedMelody=[],isSnapped=false); switchButtons(true)"
         type="button"
       >
         Play
@@ -55,23 +55,30 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         var socket = io();
+        var receivedSections;
         document.getElementById('Vconnect').addEventListener('click',function(){
-          socket.emit('Vsnap',getMelody());
+          socket.emit('Song',getSongSection());
+          socket.emit('Vsnap',getMelody(snapped));
         });
         document.getElementById('Hconnect').addEventListener('click',function(){
-          socket.emit('Hsnap',getMelody());
+          socket.emit('Hsnap',getMelody(snapped));
         });
         document.getElementById('disconnect').addEventListener('click',function(){
           snappedMelody = [];
           snapped = false;
         });
+        socket.on('Song',function(songSections){
+          receivedSections = songSections;
+        })
         socket.on('Vsnap',function(Melodies){
           snappedMelody = constructMelody(Melodies, false);
           snapped = true;
+          receivedSections = [];
         });
-        // socket.on('Hsnap',function(melody){
-        //   otherMelodies = otherMelodies.concat(shiftMelody(melody));
-        // });
+        socket.on('Hsnap',function(Melodies){
+          snappedMelody = constructMelody(Melodies, true);
+          snapped = true;
+        });
     </script>
   </body>
 </html>

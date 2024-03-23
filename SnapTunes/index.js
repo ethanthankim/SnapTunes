@@ -11,8 +11,16 @@ app.get('/',(req,res) => {
 });
 
 let melodies = [];
+let songSections = [];
 io.on('connection', (socket) => {
     console.log('a user connected');
+    socket.on('Song', (songSection)=>{
+        songSections.push(songSection);
+        if (songSections.length == 2){
+            io.emit('Song',songSections);
+            songSections = [];
+        }
+    })
     socket.on('Vsnap',(melody)=>{
         melodies.push(melody);
         if (melodies.length == 2){
@@ -20,9 +28,13 @@ io.on('connection', (socket) => {
             melodies = [];
         }
     });
-    // socket.on('Hsnap',(melody)=>{
-    //     io.emit('Hsnap',constructMelody(melody,true));
-    // });
+    socket.on('Hsnap',(melody)=>{
+        melodies.push(melody);
+        if (melodies.length == 2){
+            io.emit('Hsnap',melodies);
+            melodies = [];
+        }
+    });
     socket.on('disconnect',() => {
         console.log('user disconnected');
     });

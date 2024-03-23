@@ -81,18 +81,17 @@ function constructMelody(melodies, isHorizontal) {
   // isHorizontal is bool - true when horizontal, false when vertical
   // melody[0] will be left tablet, melody[1] will be right
 
-  let newMelody;
+  //sections is array of two ints indicating the sections that were snapped.
+  let first = reconstructMelody(melodies[0].notes);
+  let second = reconstructMelody(melodies[1].notes);
   if (isHorizontal) {
-    newMelody = new Melody(melodies[0].notes);
-    let secondMelody = shiftMelody(melodies[1]);
-    newMelody.addMelody(secondMelody);
-    newMelody.length = melodies[0].length + melodies[1].length;
-    return newMelody;
+    first.addMelody(shiftMelody(second,1));
+    first.length = melodies[0].length + melodies[1].length;
+    return first;
   }
   else {
-    newMelody = reconstructMelody(melodies[0].notes);
-    newMelody.addMelody(reconstructMelody(melodies[1].notes));
-    return newMelody;
+      first.addMelody(second);
+      return first;
   }
 }
 function reconstructMelody(melody) {
@@ -125,16 +124,13 @@ function playMelody(myMelody,snappedMelody=[],isSnapped=false) {
   }, melody.length*5000);
 }
 
-function shiftMelody(melody) {
+function shiftMelody(melody, diff=0) {
   // melody is of class Melody
   // shift will return new melody in which each note's beat is shifted by two bars
-  // note.beat is a string "bar:beat"
   let newNotes = [];
   for (note of melody.notes) {
-    var currentBeat = note.beat;
-    var newBar = parseInt(currentBeat[0]) + 2;
-    var newNote = new timeNote(note.note.slice(0,note.note.length-1),0,0,0,0,note.type,[]);
-    newNote.beat = newBar.toString() + ':' + currentBeat[currentBeat.length-1];
+    var newBar = note.bar + 2*diff;
+    var newNote = new timeNote(note.note,note.type,newBar, note.beat);
     newNotes.push(newNote);
   }
   return new Melody(newNotes);

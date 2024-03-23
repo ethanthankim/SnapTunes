@@ -198,6 +198,7 @@ class Melody {
     this.setScore();
   }
   setScore() {
+    this.score = [];
     for (var note of this.notes) {
       this.score.push({ time: note.getBeat(), note: note.note, type: note.getType() });
     }
