@@ -3,7 +3,7 @@ var blackNoteHeight = whiteNoteHeight / 2;
 var whiteNoteWidth = 100;
 var blackNoteWidth = 0.55 * whiteNoteWidth;
 
-/* ---- NOTES ----------------------------------------------------------------------*/
+/* ---- Note.js ----------------------------------------------------------------------*/
 
 class Note {
   constructor(note, x, y) {
@@ -50,22 +50,36 @@ class timeNote extends Note {
   // takes the width of the track section and number of bars
   // type will be 1, 2, 4, or 8 corresponding to whole, half, quarter, and eighth respectively
   constructor(note, x, y, tracks_width, bars, type, colours) {
-    super(note, x, y);
-    this.note = this.note + "4";
-    this.beat = null;
-    this.type = type;
-    this.value = type.toString() + "n";
-    this.h = blackNoteHeight * 0.75;
-    this.tw = tracks_width;
-    this.bars = bars;
-    this.eighth = tracks_width / (bars * 8);
-    this.w = this.eighth * (8 / type) * 0.95;
-    this.r = colours[0];
-    this.g = colours[1];
-    this.b = colours[2];
+    if (arguments.length == 4){
+      super(note, 0, 0);
+      this.simpleConstructor(arguments[0],arguments[1],arguments[2],arguments[3]);
+    }
+    else {
+      super(note, x, y);
+      this.note = this.note;
+      this.bar = 0;
+      this.beat = 0;
+      this.type = type;
+      this.value = type.toString() + "n";
+      this.h = blackNoteHeight * 0.75;
+      this.tw = tracks_width;
+      this.bars = bars;
+      this.eighth = tracks_width / (bars * 8);
+      this.w = this.eighth * (8 / type) * 0.95;
+      this.r = colours[0];
+      this.g = colours[1];
+      this.b = colours[2];
+  
+      this.selected = false;
+      this.hovered = false;
 
-    this.selected = false;
-    this.hovered = false;
+    }
+  }
+  simpleConstructor(note, type, bar, beat) {
+    this.note = note;
+    this.type = type;
+    this.bar = bar;
+    this.beat = beat;
   }
   show() {
     stroke("black");
@@ -112,6 +126,52 @@ class timeNote extends Note {
   released() {
     this.selected = false;
   }
+  getBeat() {
+    return this.bar.toString() + ":" + this.beat.toString();
+  }
+  getType() {
+    return this.type.toString() + "n";
+  }
+  inTrack(track) {
+    // returns true if note is within the track
+    return (
+      this.x >= track.x &&
+      this.x + this.w <= track.x + track.w &&
+      this.y >= track.y &&
+      this.y + this.h <= track.y + track.h
+    );
+  }
+  setNote(tracks) {
+    for (var track of tracks) {
+      if (this.inTrack(track)) {
+        this.note = track.note;
+      }
+    }
+  }
+  setBeat(tracks) {
+    // tracks is array of tracks
+    // width is the width of a single track
+    // height is the height of one track * number of tracks
+    var increment = tracks[0].w / 16;
+    var bar = 0;
+    var beat = 0;
+    for (var i = 0; i < 16; i++) {
+      if (i == 8) {
+        bar = 1;
+        beat = 0;
+      }
+      if (
+        this.x >= tracks[0].x + i * increment &&
+        this.x <= tracks[0].x + (i + 1) * increment
+      ) {
+        this.bar = bar;
+        this.beat = beat;
+        break;
+      }
+      beat = beat + 0.5;
+    }
+  }
+
 }
 // templateNotes will be always at the bottom to be dragged on to tracks
 
@@ -125,5 +185,33 @@ class templateNote extends timeNote {
     this.selected = false;
     this.x = this.x0;
     this.y = this.y0;
+  }
+}
+
+class Melody {
+  constructor(notes) {
+    // notes is array of class note
+    // length is number of sections. added by 1 each time a horizontal snap takes place
+    this.notes = notes;
+    this.score = [];
+    this.length = 1;
+    this.setScore();
+  }
+  setScore() {
+    for (var note of this.notes) {
+      this.score.push({ time: note.getBeat(), note: note.note, type: note.getType() });
+    }
+  }
+  addNote(note) {
+    this.notes.push(note);
+    this.score.push({time:note.getBeat(), note: note.note, type: note.getType() });
+  }
+  removeNote(note) {
+
+  }
+  addMelody(otherMelody) {
+    for (var note of otherMelody.notes) {
+      this.addNote(note);
+    }
   }
 }

@@ -10,11 +10,12 @@ var blackHeight = whiteHeight / 2;
 var whiteWidth = 100;
 var blackWidth = 0.55 * whiteWidth;
 var templates = [];
-var melody = [];
-var otherMelodies = [];
+var myMelody = new Melody([]);
+var snappedMelody = [];
 var colours = [255, 255, 255];
 var startBTN = document.getElementById("start");
 var synth = new Tone.PolySynth().toDestination();
+var snapped = false;
 
 startBTN.addEventListener("click", function () {
   if (Tone.context.state != "running") {
@@ -23,7 +24,7 @@ startBTN.addEventListener("click", function () {
 });
 
 function getMelody() {
-  return melody;
+  return myMelody;
 }
 function getIcon(value) {
   if (value == "piano") {
@@ -108,25 +109,27 @@ function draw() {
   displayBoard(keyboard, tracks, canX, canY, canW, canH);
   barLines(canX + whiteWidth, canY, canW - whiteWidth - 5, canH, 2);
   displayNotes(templates);
-  displayNotes(melody);
+  displayNotes(myMelody.notes);
 }
 
 function mousePressed() {
   for (var tNote of templates) {
     tNote.clicked();
   }
-  for (var note of melody) {
+  for (var note of myMelody.notes) {
     note.clicked();
   }
 }
 function mouseReleased() {
   for (var tNote of templates) {
-    createNote(tracks, tNote, melody, colours);
+    createNote(tracks, tNote, myMelody, colours);
     tNote.released();
   }
-  for (var note of melody) {
-    setBeat(tracks, note);
-    setNote(tracks, note);
+  for (var note of myMelody.notes) {
+    // setBeat(tracks, note);
+    // setNote(tracks, note);
+    note.setBeat(tracks);
+    note.setNote(tracks);
     note.released();
   }
 }
@@ -148,22 +151,22 @@ Tone.Transport.start();
 //     switchButtons(false);
 //   }, 5000);
 // }
-function playMelody() {
-  let newMelody = melody.concat(otherMelodies);
-  let score = [];
-  for (var note of newMelody) {
-    score.push({ time: note.beat, note: note.note, type: note.value });
-  }
-  section = new Tone.Part((time, section) => {
-    synth.triggerAttackRelease(section.note, section.type, time);
-  }, score);
-  // start the transport to hear the notes
-  section.start();
-  switchButtons(true);
-  setTimeout(function () {
-    switchButtons(false);
-  }, 5000);
-}
+// function playMelody() {
+//   let newMelody = melody.concat(otherMelodies);
+//   let score = [];
+//   for (var note of newMelody) {
+//     score.push({ time: note.beat, note: note.note, type: note.value });
+//   }
+//   section = new Tone.Part((time, section) => {
+//     synth.triggerAttackRelease(section.note, section.type, time);
+//   }, score);
+//   // start the transport to hear the notes
+//   section.start();
+//   switchButtons(true);
+//   setTimeout(function () {
+//     switchButtons(false);
+//   }, 5000);
+// }
 
 
 

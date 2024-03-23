@@ -9,7 +9,7 @@
     <div id="playContainer">
       <button
         id="playBTN"
-        onclick="playMelody(); switchButtons(true)"
+        onclick="playMelody(myMelody); switchButtons(true)"
         type="button"
       >
         Play
@@ -62,15 +62,16 @@
           socket.emit('Hsnap',getMelody());
         });
         document.getElementById('disconnect').addEventListener('click',function(){
-          otherMelodies = [];
+          snappedMelody = [];
+          snapped = false;
         });
-        socket.on('Vsnap',function(melody){
-          otherMelodies = otherMelodies.concat(melody);
-          console.log(otherMelodies);
+        socket.on('Vsnap',function(Melodies){
+          snappedMelody = constructMelody(Melodies, false);
+          snapped = true;
         });
-        socket.on('Hsnap',function(melody){
-          otherMelodies = otherMelodies.concat(shiftMelody(melody));
-        });
+        // socket.on('Hsnap',function(melody){
+        //   otherMelodies = otherMelodies.concat(shiftMelody(melody));
+        // });
     </script>
   </body>
 </html>

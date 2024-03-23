@@ -10,14 +10,19 @@ app.get('/',(req,res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
 
+let melodies = [];
 io.on('connection', (socket) => {
     console.log('a user connected');
     socket.on('Vsnap',(melody)=>{
-        io.emit('Vsnap',melody);
+        melodies.push(melody);
+        if (melodies.length == 2){
+            io.emit('Vsnap',melodies);
+            melodies = [];
+        }
     });
-    socket.on('Hsnap',(melody)=>{
-        io.emit('Hsnap',melody);
-    });
+    // socket.on('Hsnap',(melody)=>{
+    //     io.emit('Hsnap',constructMelody(melody,true));
+    // });
     socket.on('disconnect',() => {
         console.log('user disconnected');
     });

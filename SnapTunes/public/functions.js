@@ -1,4 +1,4 @@
-/* --- FUNCTIONS ---------------------------------------------------*/
+/* --- functions.js ---------------------------------------------------*/
 
 function barLines(x, y, width, height, bars) {
     eighth = width / (bars * 8);
@@ -45,46 +45,10 @@ function barLines(x, y, width, height, bars) {
       note.show();
     }
   }
-  function inTrack(track, note) {
-    // returns true if note is within the track
-    return (
-      note.x >= track.x &&
-      note.x + note.w <= track.x + track.w &&
-      note.y >= track.y &&
-      note.y + note.h <= track.y + track.h
-    );
-  }
-  function setBeat(tracks, note) {
-    // tracks is array of tracks
-    // width is the width of a single track
-    // height is the height of one track * number of tracks
-    var increment = tracks[0].w / 16;
-    var bar = 0;
-    var beat = 0;
-    for (var i = 0; i < 16; i++) {
-      if (i == 8) {
-        bar = 1;
-        beat = 0;
-      }
-      if (
-        note.x >= tracks[0].x + i * increment &&
-        note.x <= tracks[0].x + (i + 1) * increment
-      ) {
-        note.beat = bar.toString() + ":" + beat.toString();
-      }
-      beat = beat + 0.5;
-    }
-  }
-  function setNote(tracks, note) {
-    for (var track of tracks) {
-      if (inTrack(track, note)) {
-        note.note = track.note;
-      }
-    }
-  }
   function createNote(tracks, tNote, melody, colours) {
+    // melody is of class Melody
     for (var i = 0; i < tracks.length; i++) {
-      if (inTrack(tracks[i], tNote)) {
+      if (tNote.inTrack(tracks[i])) {
         var newNote = new timeNote(
           tracks[i].note,
           tNote.x,
@@ -94,8 +58,8 @@ function barLines(x, y, width, height, bars) {
           tNote.type,
           colours
         );
-        melody.push(newNote);
-        return newNote;
+        newNote.setBeat(tracks);
+        melody.addNote(newNote);
       }
     }
   }
@@ -104,24 +68,74 @@ function switchButtons(isPlaying) {
   if (isPlaying) {
     button.setAttribute(`onclick`, `section.stop(); switchButtons(false)`);
     button.innerHTML = "Stop";
-  } else {
-    button.setAttribute(`onclick`, `playMelody(); switchButtons(true)`);
+  } else{
+    button.setAttribute(`onclick`, `playMelody(myMelody, snappedMelody, snapped);switchButtons(true)`);
     button.innerHTML = "Play";
   }
 }
+function constructMelody(melodies, isHorizontal) {
+  // melodies is array of two melody objects
+  // [{notes:[...], score:[...], length:1} , {notes:[...], score:[...], length:1}]
+  // reconstruct melody must first be called on each melody's notes attribute
+  // function to be called when one snap occurs
+  // isHorizontal is bool - true when horizontal, false when vertical
+  // melody[0] will be left tablet, melody[1] will be right
+
+  let newMelody;
+  if (isHorizontal) {
+    newMelody = new Melody(melodies[0].notes);
+    let secondMelody = shiftMelody(melodies[1]);
+    newMelody.addMelody(secondMelody);
+    newMelody.length = melodies[0].length + melodies[1].length;
+    return newMelody;
+  }
+  else {
+    newMelody = reconstructMelody(melodies[0].notes);
+    newMelody.addMelody(reconstructMelody(melodies[1].notes));
+    return newMelody;
+  }
+}
+function reconstructMelody(melody) {
+  // when melody gets sent from server to client, it loses its attributes as a custom class so it must be reconstructed on the client side
+  // melody will be of the form [{note:"C",....},{note:"D"...}] an array of objects that contain the data of the notes but not the methods
+  let reconstructedNotes = [];
+  for (var note of melody) {
+    // call the simple constructor of timeNote
+    reconstructedNotes.push(new timeNote(note.note,note.type,note.bar,note.beat));
+  }
+  let reconstructed = new Melody(reconstructedNotes);
+  return reconstructed;
+}
+function playMelody(myMelody,snappedMelody=[],isSnapped=false) {
+  let melody;
+  if (isSnapped){
+    melody = snappedMelody;
+  }
+  else {
+    melody = myMelody;
+  }
+  section = new Tone.Part((time, section) => {
+    synth.triggerAttackRelease(section.note, section.type, time);
+  }, melody.score);
+  // start the transport to hear the notes
+  section.start();
+  switchButtons(true);
+  setTimeout(function () {
+    switchButtons(false);
+  }, melody.length*5000);
+}
+
 function shiftMelody(melody) {
-  // melody is array of Notes
+  // melody is of class Melody
   // shift will return new melody in which each note's beat is shifted by two bars
   // note.beat is a string "bar:beat"
-  let newMelody = [];
-  console.log(melody);
-  for (note of melody) {
+  let newNotes = [];
+  for (note of melody.notes) {
     var currentBeat = note.beat;
     var newBar = parseInt(currentBeat[0]) + 2;
     var newNote = new timeNote(note.note.slice(0,note.note.length-1),0,0,0,0,note.type,[]);
     newNote.beat = newBar.toString() + ':' + currentBeat[currentBeat.length-1];
-    newMelody.push(newNote);
+    newNotes.push(newNote);
   }
-  console.log(newMelody);
-  return newMelody;
+  return new Melody(newNotes);
 }
