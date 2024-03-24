@@ -73,7 +73,7 @@ function switchButtons(isPlaying) {
     button.innerHTML = "Play";
   }
 }
-function constructMelody(melodies, isHorizontal) {
+function constructMelody(melodies, isHorizontal, differences) {
   // melodies is array of two melody objects
   // [{notes:[...], score:[...], length:1} , {notes:[...], score:[...], length:1}]
   // reconstruct melody must first be called on each melody's notes attribute
@@ -83,16 +83,20 @@ function constructMelody(melodies, isHorizontal) {
 
   //sections is array of two ints indicating the sections that were snapped.
   let first = reconstructMelody(melodies[0].notes);
+  first = shiftMelody(first,differences[0]);
   let second = reconstructMelody(melodies[1].notes);
+  second = shiftMelody(second, differences[1]);
+  first.addMelody(second);
+
   if (isHorizontal) {
-    first.addMelody(shiftMelody(second,1));
     first.length = melodies[0].length + melodies[1].length;
-    return first;
   }
   else {
-      first.addMelody(second);
-      return first;
+    first.length = Math.max(melodies[0].length,melodies[1].length);
   }
+  console.log("New melody: ", first);
+  console.log("New length: ", first.length);
+  return first;
 }
 function reconstructMelody(melody) {
   // when melody gets sent from server to client, it loses its attributes as a custom class so it must be reconstructed on the client side
@@ -126,7 +130,7 @@ function playMelody(myMelody,snappedMelody=[],isSnapped=false) {
 
 function shiftMelody(melody, diff=0) {
   // melody is of class Melody
-  // shift will return new melody in which each note's beat is shifted by two bars
+  // shift will return new melody in which each note's beat is shifted by 2*diff bars
   let newNotes = [];
   for (note of melody.notes) {
     var newBar = note.bar + 2*diff;

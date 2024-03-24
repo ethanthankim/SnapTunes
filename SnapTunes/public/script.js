@@ -9,14 +9,20 @@ var whiteHeight = 60;
 var blackHeight = whiteHeight / 2;
 var whiteWidth = 100;
 var blackWidth = 0.55 * whiteWidth;
+var colours = [255, 255, 255];
 var templates = [];
+
 var myMelody = new Melody([]);
 var snappedMelody = [];
-var colours = [255, 255, 255];
+var snapped = false;
+var mySection=0;
+
+//client IDs of the clients that this device is connected to
+var partners = {top:null,bottom:null,right:null,left:null};
+
 var startBTN = document.getElementById("start");
 var synth = new Tone.PolySynth().toDestination();
-var snapped = false;
-var songSection=0;
+
 
 startBTN.addEventListener("click", function () {
   if (Tone.context.state != "running") {
@@ -33,10 +39,14 @@ function getMelody(isSnapped=false) {
   }
 }
 function getSongSection() {
-  return songSection;
+  return mySection;
 }
 function setSongSection(n) {
-  songSection = n;
+  mySection = n;
+}
+function update(n, newMelody) {
+  setSongSection(n);
+  snappedMelody = newMelody;
 }
 function getIcon(value) {
   if (value == "piano") {

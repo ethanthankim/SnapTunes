@@ -43,7 +43,7 @@
     </div>
     <button id="Vconnect">Vertical Snap</button>
     <button id="Hconnect">Horizontal Snap</button>
-    <button id="disconnect">UnSnap</button>
+    <button id="Disconnect">UnSnap</button>
   </head>
   <body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
@@ -57,28 +57,90 @@
         var socket = io();
         var receivedSections;
         document.getElementById('Vconnect').addEventListener('click',function(){
-          socket.emit('Song',getSongSection());
-          socket.emit('Vsnap',getMelody(snapped));
+          socket.emit('Vsnap',{melody:getMelody(snapped),id:socket.id,songSection:getSongSection()});
         });
         document.getElementById('Hconnect').addEventListener('click',function(){
-          socket.emit('Hsnap',getMelody(snapped));
+          socket.emit('Hsnap',{melody:getMelody(snapped),id:socket.id,songSection:getSongSection()});
         });
-        document.getElementById('disconnect').addEventListener('click',function(){
+        document.getElementById('Disconnect').addEventListener('click',function(){
           snappedMelody = [];
           snapped = false;
         });
-        socket.on('Song',function(songSections){
-          receivedSections = songSections;
+        socket.on('Vsnap',function(data){
+          let {Melodies, otherSection, isTop} = data;
+          let diff = 0;
+          let differences = [0,0];
+          if (otherSection > mySection){
+            diff = otherSection - mySection;
+            setSongSection(otherSection);
+            // call some function to propagate the change to its neighbours
+            if (isTop) {
+              differences = [diff,0];
+            }
+            else {
+              differences = [0,diff];
+            }
+          }
+          else {
+            diff = mySection - otherSection;
+            if (isTop){
+              differences = [0, diff];
+            }
+            else {
+              differences = [diff,0];
+            }
+          }
+          snappedMelody = constructMelody(Melodies, false, differences);
+          snapped = true;
+          for (var side in partners) {
+            if (partners[side] != null) {
+              socket.emit('Update', {sender: socket.id, recipient: partners[side], partner: side, 
+                newSection:mySection, newMelody:snappedMelody});
+            };
+          }
+        });
+        socket.on('Hsnap',function(data){
+          let {Melodies, otherSection, isLeft} = data;
+          let diff = 0;
+          let differences;
+          let oldSection = mySection;
+          if (!isLeft){
+            setSongSection(otherSection+1);
+            diff = mySection - oldSection;
+            differences = [0,diff];
+            // call some function to propagate the change to its neighbours
+          }
+          else {
+            diff = mySection + 1 - otherSection;
+            differences = [0,diff];
+          }
+          
+          snappedMelody = constructMelody(Melodies, true, differences);
+          snapped = true;
+        });
+        socket.on('Top',function(partnerID){
+          partners.top = partnerID;
+        });
+        socket.on('Bottom',function(partnerID){
+          partners.bottom = partnerID;
+        });
+        socket.on('Left',function(partnerID){
+          partners.left = partnerID;
+        });
+        socket.on('Right',function(partnerID){
+          partners.right = partnerID;
+        });
+        socket.on('Update', function(data){
+          let {senderID, newSection, newMelody} = data;
+          update(newSection, newMelody);
+          // send back to all partners except the one that it was received from
+          for (var side in partners) {
+            if (partners[side] != null && partners[side] != senderID) {
+              socket.emit('Update', {recipient: partners[side], partner: side, 
+                newSection:mySection, newMelody:snappedMelody});
+            };
+          }
         })
-        socket.on('Vsnap',function(Melodies){
-          snappedMelody = constructMelody(Melodies, false);
-          snapped = true;
-          receivedSections = [];
-        });
-        socket.on('Hsnap',function(Melodies){
-          snappedMelody = constructMelody(Melodies, true);
-          snapped = true;
-        });
     </script>
   </body>
 </html>
