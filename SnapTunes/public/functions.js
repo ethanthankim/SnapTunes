@@ -82,9 +82,9 @@ function constructMelody(melodies, isHorizontal, differences) {
   // melody[0] will be left tablet, melody[1] will be right
 
   //sections is array of two ints indicating the sections that were snapped.
-  let first = reconstructMelody(melodies[0].notes);
+  let first = reconstructMelody(melodies[0]);
   first = shiftMelody(first,differences[0]);
-  let second = reconstructMelody(melodies[1].notes);
+  let second = reconstructMelody(melodies[1]);
   second = shiftMelody(second, differences[1]);
   first.addMelody(second);
 
@@ -94,22 +94,26 @@ function constructMelody(melodies, isHorizontal, differences) {
   else {
     first.length = Math.max(melodies[0].length,melodies[1].length);
   }
+  first.numSections = melodies[0].numSections + melodies[1].numSections;
   console.log("New melody: ", first);
   console.log("New length: ", first.length);
+  console.log("New number of sections: ", first.numSections);
   return first;
 }
 function reconstructMelody(melody) {
   // when melody gets sent from server to client, it loses its attributes as a custom class so it must be reconstructed on the client side
   // melody will be of the form [{note:"C",....},{note:"D"...}] an array of objects that contain the data of the notes but not the methods
   let reconstructedNotes = [];
-  for (var note of melody) {
+  for (var note of melody.notes) {
     // call the simple constructor of timeNote
     reconstructedNotes.push(new timeNote(note.note,note.type,note.bar,note.beat));
   }
   let reconstructed = new Melody(reconstructedNotes);
+  reconstructed.numSections = melody.numSections;
   return reconstructed;
 }
 function playMelody(myMelody,snappedMelody=[],isSnapped=false) {
+  console.log(snappedMelody);
   let melody;
   if (isSnapped){
     melody = snappedMelody;

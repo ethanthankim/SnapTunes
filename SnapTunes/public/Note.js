@@ -145,8 +145,10 @@ class timeNote extends Note {
     for (var track of tracks) {
       if (this.inTrack(track)) {
         this.note = track.note;
+        return;
       }
     }
+    this.note = null;
   }
   setBeat(tracks) {
     // tracks is array of tracks
@@ -170,6 +172,13 @@ class timeNote extends Note {
       }
       beat = beat + 0.5;
     }
+  }
+  equals(other){
+    return (
+      this.note == other.note &&
+      this.bar == other.bar &&
+      this.beat == other.beat &&
+      this.type == other.type);
   }
 
 }
@@ -195,11 +204,16 @@ class Melody {
     this.notes = notes;
     this.score = [];
     this.length = 1;
+    this.numSections = 1;
     this.setScore();
   }
   setScore() {
     this.score = [];
     for (var note of this.notes) {
+      if (note.note == null) {
+        this.removeNote(note);
+        continue;
+      }
       this.score.push({ time: note.getBeat(), note: note.note, type: note.getType() });
     }
   }
@@ -208,11 +222,24 @@ class Melody {
     this.score.push({time:note.getBeat(), note: note.note, type: note.getType() });
   }
   removeNote(note) {
-
+    for (var i = 0; i < this.notes.length; i++) {
+      var currNote = this.notes[i];
+      if (currNote.equals(note)) {
+        return this.notes.splice(i,1);
+      }
+    }
+    return null;
   }
-  addMelody(otherMelody) {
-    for (var note of otherMelody.notes) {
+  addMelody(other) {
+    for (var note of other.notes) {
       this.addNote(note);
     }
+  }
+  removeMelody(other) {
+    for (var note of other.notes) {
+      this.removeNote(note);
+    }
+    this.setScore();
+    return this;
   }
 }

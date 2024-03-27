@@ -5,6 +5,7 @@
     "dependencies": {
         "express": "^4.19.1",
         "p5js": "^1.2.18",
+        "shake.js": "^1.2.2",
         "socket.io": "^4.7.5",
         "tone": "^14.7.77"
     }

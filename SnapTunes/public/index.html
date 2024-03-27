@@ -9,7 +9,7 @@
     <div id="playContainer">
       <button
         id="playBTN"
-        onclick="playMelody(myMelody,snappedMelody=[],isSnapped=false); switchButtons(true)"
+        onclick="playMelody(myMelody,snappedMelody, snapped); switchButtons(true)"
         type="button"
       >
         Play
@@ -43,11 +43,16 @@
     </div>
     <button id="Vconnect">Vertical Snap</button>
     <button id="Hconnect">Horizontal Snap</button>
-    <button id="Disconnect">UnSnap</button>
+    <button id="Unsnap">Disconnect</button>
+    <!-- <button id="disconnectTop">UnSnap Top</button>
+    <button id="disconnectBottom">UnSnap Bottom</button>
+    <button id="disconnectRight">UnSnap Right</button>
+    <button id="disconnectLeft">UnSnap Left</button> -->
   </head>
   <body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.js"></script>
+    <script src="shake.js"></script>
     <script src="Note.js"></script>
     <script src="Track.js"></script>
     <script src="functions.js"></script>
@@ -55,15 +60,53 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         var socket = io();
-        var receivedSections;
+        var shakeEvent = new Shake({threshold: 15, timeout: 1000});
+        shakeEvent.start();
+        if ('DeviceMotionEvent' in window) {
+          // Device motion events are supported
+          console.log('Device motion events are supported');
+        } else {
+          // Device motion events are not supported
+          console.log('Device motion events are not supported');
+        }
+
         document.getElementById('Vconnect').addEventListener('click',function(){
           socket.emit('Vsnap',{melody:getMelody(snapped),id:socket.id,songSection:getSongSection()});
         });
         document.getElementById('Hconnect').addEventListener('click',function(){
           socket.emit('Hsnap',{melody:getMelody(snapped),id:socket.id,songSection:getSongSection()});
         });
-        document.getElementById('Disconnect').addEventListener('click',function(){
-          snappedMelody = [];
+        // document.getElementById('disconnectTop').addEventListener('click',function(){
+        //   if (partners.top != null){
+        //     socket.emit('Unsnap', {recipient: partners.top,id:socket.id,side:'bottom'});
+        //   }
+        // });
+        // document.getElementById('disconnectBottom').addEventListener('click',function(){
+        //   if (partners.bottom != null){
+        //     socket.emit('Unsnap', {recipient: partners.bottom,id:socket.id,side:'top'});
+        //   }
+        // });
+        // document.getElementById('disconnectRight').addEventListener('click',function(){
+        //   if (partners.right != null){
+        //     socket.emit('Unsnap', {recipient: partners.right,id:socket.id,side:'left'});
+        //   }
+        // });
+        // document.getElementById('disconnectLeft').addEventListener('click',function(){
+        //   if (partners.left != null){
+        //     socket.emit('Unsnap', {recipient: partners.left,id:socket.id,side:'right'});
+        //   }
+        // });
+        document.getElementById('Unsnap').addEventListener('click',()=>{
+          socket.emit('Reset');
+        })
+        window.addEventListener('shake', function(){
+          console.log("Shake detected");
+          socket.emit('Reset');
+        },false);
+
+        socket.on('Reset',function(){
+          update(0, new Melody([]));
+          partners = {top:null,bottom:null,right:null,left:null};
           snapped = false;
         });
         socket.on('Vsnap',function(data){
@@ -73,7 +116,6 @@
           if (otherSection > mySection){
             diff = otherSection - mySection;
             setSongSection(otherSection);
-            // call some function to propagate the change to its neighbours
             if (isTop) {
               differences = [diff,0];
             }
@@ -95,7 +137,7 @@
           for (var side in partners) {
             if (partners[side] != null) {
               socket.emit('Update', {sender: socket.id, recipient: partners[side], partner: side, 
-                newSection:mySection, newMelody:snappedMelody});
+                newSection:mySection, newMelody:snappedMelody, senderMelody:myMelody});
             };
           }
         });
@@ -141,6 +183,33 @@
             };
           }
         })
+        socket.on('Unsnap', function(data){
+          let {formerPartner, mySide} = data;
+          var nullPartners = 0;
+          for (var side in partners){
+            if (partners[side] == formerPartner){
+              partners[side] = null;
+            }
+            if (partners[side] == null){
+              nullPartners += 1;
+            }
+          }
+          if (nullPartners == 4){
+            snapped = false;
+          }
+          socket.emit('Resnap', {id:socket.id, partners:partners, melody:myMelody, side:mySide,section:mySection,total:snappedMelody.numSections})
+        });
+        socket.on('Resnap', function(side){
+          socket.emit('Resnap', {id:socket.id, partners:partners, melody:myMelody, side:side,section:mySection,total:snappedMelody.numSections})
+        });
+        socket.on('Remove',function(data){
+          console.log("Got here")
+          let {melody,section} = data;
+          let melodyToRemove = shiftMelody(reconstructMelody(melody),section);
+          snappedMelody = snappedMelody.removeMelody(melodyToRemove);
+          snappedMelody.numSections -= 1;
+          console.log(snappedMelody);
+        });
     </script>
   </body>
 </html>

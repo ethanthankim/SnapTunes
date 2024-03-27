@@ -13,7 +13,7 @@ var colours = [255, 255, 255];
 var templates = [];
 
 var myMelody = new Melody([]);
-var snappedMelody = [];
+let snappedMelody = new Melody([]);
 var snapped = false;
 var mySection=0;
 
@@ -22,7 +22,6 @@ var partners = {top:null,bottom:null,right:null,left:null};
 
 var startBTN = document.getElementById("start");
 var synth = new Tone.PolySynth().toDestination();
-
 
 startBTN.addEventListener("click", function () {
   if (Tone.context.state != "running") {
@@ -46,7 +45,7 @@ function setSongSection(n) {
 }
 function update(n, newMelody) {
   setSongSection(n);
-  snappedMelody = newMelody;
+  snappedMelody = reconstructMelody(newMelody);
 }
 function getIcon(value) {
   if (value == "piano") {
@@ -148,8 +147,6 @@ function mouseReleased() {
     tNote.released();
   }
   for (var note of myMelody.notes) {
-    // setBeat(tracks, note);
-    // setNote(tracks, note);
     note.setBeat(tracks);
     note.setNote(tracks);
     myMelody.setScore();

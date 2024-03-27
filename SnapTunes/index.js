@@ -13,13 +13,16 @@ app.get('/',(req,res) => {
 let melodies = [];
 let IDs = [];
 let songSections = [];
+let unsnapPair = [];
+let groups = {top:[],bottom:[],left:[],right:[]};
+
 io.on('connection', (socket) => {
     console.log('a user connected');
     socket.on('Vsnap',(data)=>{
         let {melody, id, songSection} = data;
+        // IDs[0] is top, IDs[1] is bottom
         IDs.push(id);
         songSections.push(songSection);
-        // IDs[0] is top, IDs[1] is bottom
         melodies.push(melody);
         if (melodies.length == 2){
             io.to(IDs[0]).emit('Vsnap',{Melodies:melodies, otherSection:songSections[1],isTop:true});
@@ -48,7 +51,7 @@ io.on('connection', (socket) => {
         }
     });
     socket.on('Update',(data)=>{
-        let {sender, recipient, partner, newSection, newMelody} = data;
+        let {sender, recipient, partner, newSection, newMelody, senderMelody} = data;
         // if partner is top or bottom, newSection can stay the same
         if (partner=='right'){
             newSection = newSection + 1;
@@ -57,6 +60,73 @@ io.on('connection', (socket) => {
             newSection = newSection - 1;
         }
         io.to(recipient).emit('Update',{senderID: sender, newSection:newSection, newMelody:newMelody});
+    });
+    // socket.on('Unsnap',(data)=>{
+    //     unsnapPair.push(data);
+    //     if (unsnapPair.length == 2){
+    //         let recipient1 = unsnapPair[0].recipient;
+    //         let recipient2 = unsnapPair[1].recipient;
+    //         let sender1 = unsnapPair[0].id;
+    //         let sender2 = unsnapPair[1].id;
+    //         let side1 = unsnapPair[0].side;
+    //         let side2 = unsnapPair[1].side;
+    //         if (recipient1==sender2 && recipient2 == sender1){
+    //             io.to(recipient1).emit('Unsnap', {formerPartner:sender1,mySide:side2});
+    //             io.to(recipient2).emit('Unsnap', {formerPartner:sender2,mySide:side1});
+    //         }
+    //         unsnapPair = [];
+    //     };
+    // });
+    // socket.on('Resnap', (data)=>{
+    //     let {id,partners,melody,side,section,total} = data;
+    //     groups[side].push({id:id,melody:melody,section:section});
+    //     console.log(groups,groups.top.length,groups.bottom.length,total);
+    //     if (groups['top'].length + groups['bottom'].length >= total) {
+    //         // delete the topGroup melodies from bottomGroup and vice versa
+    //         console.log(groups);
+    //         for (var topDevice of groups['top']){
+    //             for (var bottomDevice of groups['bottom']){
+    //                 io.to(bottomDevice.id).emit('Remove',{melody:topDevice.melody,section:topDevice.section});
+    //                 io.to(topDevice.id).emit('Remove',{melody:bottomDevice.melody,section:bottomDevice.section});
+    //             }
+    //         }
+    //         groups['top'] = [];
+    //         groups['bottom'] = [];
+    //     }
+    //     else if (groups['left'].length + groups['right'].length == total) {
+    //         // delete the leftGroup melodies from rightGroup and vice versa
+    //         console.log(groups);
+    //         for (var leftDevice of groups['left']){
+    //             for (var rightDevice of groups['right']){
+    //                 io.to(leftDevice.id).emit('Remove',{melody:leftDevice.melody,section:leftDevice.section});
+    //                 io.to(rightDevice.id).emit('Remove',{melody:rightDevice.melody,section:rightDevice.section});
+    //             }
+    //         }
+    //         groups['left'] = [];
+    //         groups['right'] = [];
+    //     }
+    //     else {
+    //         //request info from the partners
+    //         console.log(side,partners);
+    //         for (var partner in partners){
+    //             var partnerID = partners[partner];
+    //             if (partnerID != null) {
+    //                 // check if its already in groups
+    //                 var counted = false;
+    //                 for (var p of groups[side]){
+    //                     if (p.id == partnerID){
+    //                         counted = true;
+    //                         break;
+    //                     }
+    //                 }
+    //                 if (counted) {continue;}
+    //                 io.to(partnerID).emit('Resnap',side);
+    //             }
+    //         }
+    //     }
+    // });
+    socket.on('Reset',()=>{
+        io.emit('Reset');
     });
     socket.on('disconnect',() => {
         console.log('user disconnected');
