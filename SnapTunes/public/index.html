@@ -103,6 +103,9 @@
           console.log("Shake detected");
           socket.emit('Reset');
         },false);
+        document.getElementById('Unsnap').addEventListener('click',()=>{
+          socket.emit('Reset');
+        });
 
         socket.on('Reset',function(){
           update(0, new Melody([]));

@@ -21,7 +21,22 @@ var mySection=0;
 var partners = {top:null,bottom:null,right:null,left:null};
 
 var startBTN = document.getElementById("start");
-var synth = new Tone.PolySynth().toDestination();
+// var synth = new Tone.PolySynth().toDestination();
+const synth = new Tone.Sampler({
+	urls: {
+		C3: "SnapTunes_Sampler_Test/Piano_C3.mp3",
+    D3: "SnapTunes_Sampler_Test/Piano_D3.mp3",
+    E3: "SnapTunes_Sampler_Test/Piano_E3.mp3",
+    F3: "SnapTunes_Sampler_Test/Piano_F3.mp3",
+    G3: "SnapTunes_Sampler_Test/Piano_G3.mp3",
+    A3: "SnapTunes_Sampler_Test/Piano_A3.mp3",
+    B3: "SnapTunes_Sampler_Test/Piano_B3.mp3",
+	},
+	baseUrl: "https://tonejs.github.io/audio/casio/",
+	onload: () => {
+		sampler.triggerAttackRelease(["C1", "E1", "G1", "B1"], 0.5);
+	}
+}).toDestination();
 
 startBTN.addEventListener("click", function () {
   if (Tone.context.state != "running") {
