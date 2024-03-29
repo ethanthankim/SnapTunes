@@ -6,50 +6,55 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 
+// const path = require('path');
+
+// const audioDirectory = path.join("public/SnapTunes_Sampler_Test", 'audio');
+// app.use(express.static(audioDirectory));
+
 app.get('/',(req,res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
 
 let melodies = [];
-let IDs = [];
-let songSections = [];
-let unsnapPair = [];
-let groups = {top:[],bottom:[],left:[],right:[]};
+let swipes = {top:null,bottom:null,left:null,right:null};
+
+// Remove any swipes older than a second
+setInterval(()=>{swipes = {top:null,bottom:null,left:null,right:null};},1000);
 
 io.on('connection', (socket) => {
     console.log('a user connected');
-    socket.on('Vsnap',(data)=>{
-        let {melody, id, songSection} = data;
-        // IDs[0] is top, IDs[1] is bottom
-        IDs.push(id);
-        songSections.push(songSection);
-        melodies.push(melody);
-        if (melodies.length == 2){
-            io.to(IDs[0]).emit('Vsnap',{Melodies:melodies, otherSection:songSections[1],isTop:true});
-            io.to(IDs[1]).emit('Vsnap',{Melodies:melodies, otherSection:songSections[0],isTop:false});
-            io.to(IDs[0]).emit('Bottom',IDs[1]);
-            io.to(IDs[1]).emit('Top', IDs[0]);
-            melodies = [];
-            IDs = [];
-            songSections = [];
-        }
-    });
-    socket.on('Hsnap',(data)=>{
-        let {melody, id, songSection} = data;
-        IDs.push(id);
-        songSections.push(songSection);
-        // IDs[0] is left, IDs[1] is right
-        melodies.push(melody);
-        if (melodies.length == 2){
-            io.to(IDs[0]).emit('Hsnap',{Melodies:melodies, otherSection:songSections[1],isLeft:true});
-            io.to(IDs[1]).emit('Hsnap',{Melodies:melodies, otherSection:songSections[0],isLeft:false});
-            io.to(IDs[0]).emit('Right',IDs[1]);
-            io.to(IDs[1]).emit('Left', IDs[0]);
-            melodies = [];
-            IDs = [];
-            songSections = [];
-        }
-    });
+    // socket.on('Vsnap',(data)=>{
+    //     let {melody, id, songSection} = data;
+    //     // IDs[0] is top, IDs[1] is bottom
+    //     IDs.push(id);
+    //     songSections.push(songSection);
+    //     melodies.push(melody);
+    //     if (melodies.length == 2){
+    //         io.to(IDs[0]).emit('Vsnap',{Melodies:melodies, otherSection:songSections[1],isTop:true});
+    //         io.to(IDs[1]).emit('Vsnap',{Melodies:melodies, otherSection:songSections[0],isTop:false});
+    //         io.to(IDs[0]).emit('Bottom',IDs[1]);
+    //         io.to(IDs[1]).emit('Top', IDs[0]);
+    //         melodies = [];
+    //         IDs = [];
+    //         songSections = [];
+    //     }
+    // });
+    // socket.on('Hsnap',(data)=>{
+    //     let {melody, id, songSection} = data;
+    //     IDs.push(id);
+    //     songSections.push(songSection);
+    //     // IDs[0] is left, IDs[1] is right
+    //     melodies.push(melody);
+    //     if (melodies.length == 2){
+    //         io.to(IDs[0]).emit('Hsnap',{Melodies:melodies, otherSection:songSections[1],isLeft:true});
+    //         io.to(IDs[1]).emit('Hsnap',{Melodies:melodies, otherSection:songSections[0],isLeft:false});
+    //         io.to(IDs[0]).emit('Right',IDs[1]);
+    //         io.to(IDs[1]).emit('Left', IDs[0]);
+    //         melodies = [];
+    //         IDs = [];
+    //         songSections = [];
+    //     }
+    // });
     socket.on('Update',(data)=>{
         let {sender, recipient, partner, newSection, newMelody, senderMelody} = data;
         // if partner is top or bottom, newSection can stay the same
@@ -125,6 +130,35 @@ io.on('connection', (socket) => {
     //         }
     //     }
     // });
+    socket.on('Snap', (data)=>{
+        let {melody,id,songSection,partners, swipe} = data;
+        // check if the device already has a partner in that direction
+        if (partners[swipe] == null) {
+            swipes[swipe] = {melody:melody, id:id, songSection:songSection};
+        };
+        if (swipes['top'] != null && swipes['bottom']!= null){
+            // The device on top was the one that had the bottom swipe
+            let bottom = swipes['top'];
+            let top = swipes['bottom'];
+            melodies.push(top.melody);
+            melodies.push(bottom.melody);
+            io.to(top.id).emit('Vsnap',{Melodies:melodies, otherSection:bottom.songSection,isTop:true});
+            io.to(bottom.id).emit('Vsnap',{Melodies:melodies, otherSection:top.songSection,isTop:false});
+            io.to(top.id).emit('Bottom',bottom.id);
+            io.to(bottom.id).emit('Top', top.id);
+        }
+        if (swipes['left'] != null && swipes['right']!= null){
+            let right = swipes['left'];
+            let left = swipes['right'];
+            melodies.push(left.melody);
+            melodies.push(right.melody);
+            io.to(left.id).emit('Hsnap',{Melodies:melodies, otherSection:right.songSection,isLeft:true});
+            io.to(right.id).emit('Hsnap',{Melodies:melodies, otherSection:left.songSection,isLeft:false});
+            io.to(left.id).emit('Right',right.id);
+            io.to(right.id).emit('Left', left.id);
+        }
+        melodies = [];
+    });
     socket.on('Reset',()=>{
         io.emit('Reset');
     });

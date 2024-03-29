@@ -41,8 +41,8 @@
         Bells
       </button>
     </div>
-    <button id="Vconnect">Vertical Snap</button>
-    <button id="Hconnect">Horizontal Snap</button>
+    <!-- <button id="Vconnect">Vertical Snap</button>
+    <button id="Hconnect">Horizontal Snap</button> -->
     <button id="Unsnap">Disconnect</button>
     <!-- <button id="disconnectTop">UnSnap Top</button>
     <button id="disconnectBottom">UnSnap Bottom</button>
@@ -69,13 +69,42 @@
           // Device motion events are not supported
           console.log('Device motion events are not supported');
         }
-
-        document.getElementById('Vconnect').addEventListener('click',function(){
-          socket.emit('Vsnap',{melody:getMelody(snapped),id:socket.id,songSection:getSongSection()});
+        window.addEventListener('touchend',function(event){
+          let swipe = null;
+          let xPos = event['changedTouches'][0]['clientX'];
+          let yPos = event['changedTouches'][0]['clientY'];
+          if (xPos < 10) {swipe = 'left';}
+          else if (xPos > window.innerWidth-10) {swipe = 'right';}
+          else if (yPos < 10) {swipe = 'top';}
+          else if (yPos > window.innerHeight - 10) {swipe = 'bottom';};
+          
+          if (swipe != null) {
+            console.log('edge swipe!')
+            socket.emit("edgeSwipe", {melody:getMelody(snapped),id:socket.id,
+            songSection:getSongSection(),partners:partners, swipe: swipe});
+          }
         });
-        document.getElementById('Hconnect').addEventListener('click',function(){
-          socket.emit('Hsnap',{melody:getMelody(snapped),id:socket.id,songSection:getSongSection()});
+        window.addEventListener('mouseup',function(event){
+          let swipe = null;
+          let xPos = event['clientX'];
+          let yPos = event['clientY'];
+          if (xPos < 10) {swipe = 'left';}
+          else if (xPos > window.innerWidth-10) {swipe = 'right';}
+          else if (yPos < 10) {swipe = 'top';}
+          else if (yPos > window.innerHeight - 10) {swipe = 'bottom';};
+          
+          if (swipe != null) {
+            console.log('edge swipe!')
+            socket.emit("Snap", {melody:getMelody(snapped),id:socket.id,
+            songSection:getSongSection(),partners:partners, swipe: swipe});
+          }
         });
+        // document.getElementById('Vconnect').addEventListener('click',function(){
+        //   socket.emit('Vsnap',{melody:getMelody(snapped),id:socket.id,songSection:getSongSection()});
+        // });
+        // document.getElementById('Hconnect').addEventListener('click',function(){
+        //   socket.emit('Hsnap',{melody:getMelody(snapped),id:socket.id,songSection:getSongSection()});
+        // });
         // document.getElementById('disconnectTop').addEventListener('click',function(){
         //   if (partners.top != null){
         //     socket.emit('Unsnap', {recipient: partners.top,id:socket.id,side:'bottom'});
@@ -96,13 +125,11 @@
         //     socket.emit('Unsnap', {recipient: partners.left,id:socket.id,side:'right'});
         //   }
         // });
-        document.getElementById('Unsnap').addEventListener('click',()=>{
-          socket.emit('Reset');
-        })
-        window.addEventListener('shake', function(){
-          console.log("Shake detected");
-          socket.emit('Reset');
-        },false);
+
+        // window.addEventListener('shake', function(){
+        //   console.log("Shake detected");
+        //   socket.emit('Reset');
+        // },false);
         document.getElementById('Unsnap').addEventListener('click',()=>{
           socket.emit('Reset');
         });

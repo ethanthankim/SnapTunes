@@ -21,22 +21,22 @@ var mySection=0;
 var partners = {top:null,bottom:null,right:null,left:null};
 
 var startBTN = document.getElementById("start");
-// var synth = new Tone.PolySynth().toDestination();
-const synth = new Tone.Sampler({
-	urls: {
-		C3: "SnapTunes_Sampler_Test/Piano_C3.mp3",
-    D3: "SnapTunes_Sampler_Test/Piano_D3.mp3",
-    E3: "SnapTunes_Sampler_Test/Piano_E3.mp3",
-    F3: "SnapTunes_Sampler_Test/Piano_F3.mp3",
-    G3: "SnapTunes_Sampler_Test/Piano_G3.mp3",
-    A3: "SnapTunes_Sampler_Test/Piano_A3.mp3",
-    B3: "SnapTunes_Sampler_Test/Piano_B3.mp3",
-	},
-	baseUrl: "https://tonejs.github.io/audio/casio/",
-	onload: () => {
-		sampler.triggerAttackRelease(["C1", "E1", "G1", "B1"], 0.5);
-	}
-}).toDestination();
+var synth = new Tone.PolySynth().toDestination();
+// const synth = new Tone.Sampler({
+// 	urls: {
+// 		C4: "Piano_C3.mp3",
+//     D4: "Piano_D3.mp3",
+//     E4: "Piano_E3.mp3",
+//     F4: "Piano_F3.mp3",
+//     G4: "Piano_G3.mp3",
+//     A4: "Piano_A3.mp3",
+//     B4: "Piano_B3.mp3",
+// 	},
+// 	baseUrl: "https://www.cs.ryerson.ca/~jsmorris/piano/",
+// 	onload: () => {
+// 		sampler.triggerAttackRelease(["C1", "E1", "G1", "B1"], 0.5);
+// 	}
+// }).toDestination();
 
 startBTN.addEventListener("click", function () {
   if (Tone.context.state != "running") {
@@ -157,6 +157,26 @@ function mousePressed() {
   }
 }
 function mouseReleased() {
+  for (var tNote of templates) {
+    createNote(tracks, tNote, myMelody, colours);
+    tNote.released();
+  }
+  for (var note of myMelody.notes) {
+    note.setBeat(tracks);
+    note.setNote(tracks);
+    myMelody.setScore();
+    note.released();
+  }
+}
+function touchStarted() {
+  for (var tNote of templates) {
+    tNote.clicked();
+  }
+  for (var note of myMelody.notes) {
+    note.clicked();
+  }
+}
+function touchEnded() {
   for (var tNote of templates) {
     createNote(tracks, tNote, myMelody, colours);
     tNote.released();
