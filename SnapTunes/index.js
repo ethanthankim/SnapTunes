@@ -1,19 +1,27 @@
 const express= require('express');
+const path = require('path');
 const app = express();
+const port = 3000; 
+
 app.use(express.static('public'));
+// Serve static files from the 'audio' directory
+// app.use('/audio', express.static(path.join(__dirname, 'audio')));
+// console.log(path.join(__dirname, 'audio'));
+// app.use(express.static('audio'));
+
+app.get('/',(req,res) => {
+    res.sendFile(__dirname + '/public/index.html');
+});
+
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 
-// const path = require('path');
-
 // const audioDirectory = path.join("public/SnapTunes_Sampler_Test", 'audio');
 // app.use(express.static(audioDirectory));
+// app.use(express.static('audio'));
 
-app.get('/',(req,res) => {
-    res.sendFile(__dirname + '/public/index.html');
-});
 
 let melodies = [];
 let swipes = {top:null,bottom:null,left:null,right:null};
@@ -23,6 +31,7 @@ setInterval(()=>{swipes = {top:null,bottom:null,left:null,right:null};},1000);
 
 io.on('connection', (socket) => {
     console.log('a user connected');
+    /* An earlier version that required separate channels for snapping to function */
     // socket.on('Vsnap',(data)=>{
     //     let {melody, id, songSection} = data;
     //     // IDs[0] is top, IDs[1] is bottom
@@ -56,7 +65,7 @@ io.on('connection', (socket) => {
     //     }
     // });
     socket.on('Update',(data)=>{
-        let {sender, recipient, partner, newSection, newMelody, senderMelody} = data;
+        let {sender, recipient, partner, newSection, newMelody} = data;
         // if partner is top or bottom, newSection can stay the same
         if (partner=='right'){
             newSection = newSection + 1;
@@ -66,6 +75,8 @@ io.on('connection', (socket) => {
         }
         io.to(recipient).emit('Update',{senderID: sender, newSection:newSection, newMelody:newMelody});
     });
+    /* Attempted unsnapping that did not quite work out */
+
     // socket.on('Unsnap',(data)=>{
     //     unsnapPair.push(data);
     //     if (unsnapPair.length == 2){
@@ -167,6 +178,6 @@ io.on('connection', (socket) => {
     });
 });
 
-server.listen(3000,() => {
-    console.log('listening on *:3000');
+server.listen(port,() => {
+    console.log(`listening on *:${port}`);
 });

@@ -60,8 +60,17 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         var socket = io();
-        var shakeEvent = new Shake({threshold: 15, timeout: 1000});
-        shakeEvent.start();
+
+        /* If devices support device motion */
+        var shakeEvent = new Shake({threshold: 5, timeout: 1000});
+        
+        window.addEventListener('shake',()=>{
+          console.log("Shake detected!");
+          if (snapped) {
+            socket.emit('Reset');
+          }
+        });
+
         if ('DeviceMotionEvent' in window) {
           // Device motion events are supported
           console.log('Device motion events are supported');
@@ -80,7 +89,7 @@
           
           if (swipe != null) {
             console.log('edge swipe!')
-            socket.emit("edgeSwipe", {melody:getMelody(snapped),id:socket.id,
+            socket.emit("Snap", {melody:getMelody(snapped),id:socket.id,
             songSection:getSongSection(),partners:partners, swipe: swipe});
           }
         });
@@ -130,6 +139,7 @@
         //   console.log("Shake detected");
         //   socket.emit('Reset');
         // },false);
+        
         document.getElementById('Unsnap').addEventListener('click',()=>{
           socket.emit('Reset');
         });
@@ -138,6 +148,9 @@
           update(0, new Melody([]));
           partners = {top:null,bottom:null,right:null,left:null};
           snapped = false;
+
+          // if devicemotion is supported, shakeEvent stops listening when unsnapped
+          shakeEvent.stop();
         });
         socket.on('Vsnap',function(data){
           let {Melodies, otherSection, isTop} = data;
@@ -164,10 +177,14 @@
           }
           snappedMelody = constructMelody(Melodies, false, differences);
           snapped = true;
+
+          // if devicemotion were supported, start listening for shakeEvent once they are snapped
+          shakeEvent.start();
+
           for (var side in partners) {
             if (partners[side] != null) {
               socket.emit('Update', {sender: socket.id, recipient: partners[side], partner: side, 
-                newSection:mySection, newMelody:snappedMelody, senderMelody:myMelody});
+                newSection:mySection, newMelody:snappedMelody});
             };
           }
         });
@@ -179,16 +196,24 @@
           if (!isLeft){
             setSongSection(otherSection+1);
             diff = mySection - oldSection;
-            differences = [0,diff];
-            // call some function to propagate the change to its neighbours
           }
           else {
             diff = mySection + 1 - otherSection;
-            differences = [0,diff];
           }
-          
+          differences = [0,diff];
           snappedMelody = constructMelody(Melodies, true, differences);
           snapped = true;
+
+          // if devicemotion were supported, start listening for shakeEvent once they are snapped
+          shakeEvent.start();
+
+          for (var side in partners) {
+            if (partners[side] != null) {
+              socket.emit('Update', {sender: socket.id, recipient: partners[side], partner: side, 
+                newSection:mySection, newMelody:snappedMelody, senderMelody:myMelody});
+            };
+          }
+
         });
         socket.on('Top',function(partnerID){
           partners.top = partnerID;
@@ -213,33 +238,35 @@
             };
           }
         })
-        socket.on('Unsnap', function(data){
-          let {formerPartner, mySide} = data;
-          var nullPartners = 0;
-          for (var side in partners){
-            if (partners[side] == formerPartner){
-              partners[side] = null;
-            }
-            if (partners[side] == null){
-              nullPartners += 1;
-            }
-          }
-          if (nullPartners == 4){
-            snapped = false;
-          }
-          socket.emit('Resnap', {id:socket.id, partners:partners, melody:myMelody, side:mySide,section:mySection,total:snappedMelody.numSections})
-        });
-        socket.on('Resnap', function(side){
-          socket.emit('Resnap', {id:socket.id, partners:partners, melody:myMelody, side:side,section:mySection,total:snappedMelody.numSections})
-        });
-        socket.on('Remove',function(data){
-          console.log("Got here")
-          let {melody,section} = data;
-          let melodyToRemove = shiftMelody(reconstructMelody(melody),section);
-          snappedMelody = snappedMelody.removeMelody(melodyToRemove);
-          snappedMelody.numSections -= 1;
-          console.log(snappedMelody);
-        });
+        /* Attempted Unsnapping that did not end up working */
+
+        // socket.on('Unsnap', function(data){
+        //   let {formerPartner, mySide} = data;
+        //   var nullPartners = 0;
+        //   for (var side in partners){
+        //     if (partners[side] == formerPartner){
+        //       partners[side] = null;
+        //     }
+        //     if (partners[side] == null){
+        //       nullPartners += 1;
+        //     }
+        //   }
+        //   if (nullPartners == 4){
+        //     snapped = false;
+        //   }
+        //   socket.emit('Resnap', {id:socket.id, partners:partners, melody:myMelody, side:mySide,section:mySection,total:snappedMelody.numSections})
+        // });
+        // socket.on('Resnap', function(side){
+        //   socket.emit('Resnap', {id:socket.id, partners:partners, melody:myMelody, side:side,section:mySection,total:snappedMelody.numSections})
+        // });
+        // socket.on('Remove',function(data){
+        //   console.log("Got here")
+        //   let {melody,section} = data;
+        //   let melodyToRemove = shiftMelody(reconstructMelody(melody),section);
+        //   snappedMelody = snappedMelody.removeMelody(melodyToRemove);
+        //   snappedMelody.numSections -= 1;
+        //   console.log(snappedMelody);
+        // });
     </script>
   </body>
 </html>
