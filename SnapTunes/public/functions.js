@@ -56,6 +56,7 @@ function barLines(x, y, width, height, bars) {
           tracks[i].w,
           tNote.bars,
           tNote.type,
+          tnote.className="empty",
           colours
         );
         newNote.setBeat(tracks);

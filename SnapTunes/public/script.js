@@ -66,17 +66,17 @@ function update(n, newMelody) {
 }
 function getIcon(value) {
   if (value == "piano") {
-    var imageString = `<image src="instrument_icons/piano.png" class="instrument"></image>`;
+    var imageString = `<image src="instrument_icons/piano.svg" class="instrument"></image>`;
     colours[0] = 255;
     colours[1] = 204;
     colours[2] = 0;
   } else if (value == "guitar") {
-    var imageString = `<image src="instrument_icons/guitar.png" class="instrument"></image>`;
+    var imageString = `<image src="instrument_icons/electric-guitar.svg" class="instrument"></image>`;
     colours[0] = 255;
     colours[1] = 0;
     colours[2] = 0;
   } else if (value == "bells") {
-    var imageString = `<image src="instrument_icons/bells.png" class="instrument"></image>`;
+    var imageString = `<image src="instrument_icons/bells.svg" class="instrument"></image>`;
     colours[0] = 255;
     colours[1] = 192;
     colours[2] = 203;
