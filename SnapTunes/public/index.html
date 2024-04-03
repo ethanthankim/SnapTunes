@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Keyboard</title>
+    <title>SnapTunes</title>
+    <link rel="icon" href="favicon/favicon.ico">
     <link rel="stylesheet" href="./style.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.js"></script>
@@ -19,6 +20,7 @@
     <div id="playContainer">
       <button
         id="playBTN"
+        class="play"
         onclick="playMelody(myMelody,snappedMelody, snapped); switchButtons(true)"
         type="button"
       >
@@ -31,9 +33,12 @@
         value="piano"
         onclick="getIcon(this.value)"
         style="width: 100%"
+        class="piano"
       >
         Piano
       </button>
+      <br>
+      <br>
       <button
         type="button"
         value="guitar"
@@ -42,6 +47,8 @@
       >
         Guitar
       </button>
+      <br>
+      <br>
       <button
         type="button"
         value="bells"

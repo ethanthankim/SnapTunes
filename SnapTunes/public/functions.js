@@ -68,9 +68,11 @@ function switchButtons(isPlaying) {
   if (isPlaying) {
     button.setAttribute(`onclick`, `section.stop(); switchButtons(false)`);
     button.innerHTML = "Stop";
+    document.getElementById("playBTN").style.backgroundColor = "#cf0a45";
   } else{
     button.setAttribute(`onclick`, `playMelody(myMelody, snappedMelody, snapped);switchButtons(true)`);
     button.innerHTML = "Play";
+    document.getElementById("playBTN").style.backgroundColor = "#04AA6D";
   }
 }
 function constructMelody(melodies, isHorizontal, differences) {

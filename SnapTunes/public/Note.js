@@ -125,6 +125,20 @@ class timeNote extends Note {
   }
   released() {
     this.selected = false;
+
+  /*
+    this.animate(
+      [
+        {transform: scale(1)},
+        {transform: scale(1.25)},
+        {transform: scale(0.75)},
+        {transform: scale(1)},
+      ],
+    {
+      duration:600,
+    },
+  );*/
+
   }
   getBeat() {
     return this.bar.toString() + ":" + this.beat.toString();
