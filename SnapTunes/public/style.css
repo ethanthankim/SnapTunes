@@ -21,3 +21,88 @@
   width: 100%;
   height: 100%;
 }
+<<<<<<< Updated upstream
+=======
+
+.play:hover {background-color: #3e8e41}
+
+.play:active {
+  background-color: #cf0a45;
+  box-shadow: 0 3px #666;
+  transform: translateY(9px);
+}
+
+.piano {
+  align-items: center;
+  background-color: initial;
+  background-image: linear-gradient(#464d55, #25292e);
+  border-radius: 8px;
+  border-width: 0;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 22px;
+  height: 52px;
+  justify-content: center;
+  line-height: 1;
+  margin: 0;
+  outline: none;
+  overflow: hidden;
+  padding: 0 32px;
+  text-align: center;
+}
+
+.piano:hover {
+  box-shadow: rgba(0, 1, 0, .2) 0 2px 8px;
+  opacity: .85;
+}
+
+.piano:active {
+  outline: 0;
+}
+
+.piano:focus {
+  box-shadow: rgba(0, 0, 0, .5) 0 0 0 3px;
+}
+
+@keyframes noteanimate {
+  0%   {transform:scale(1);}
+  50%  {transform:scale(0.5)}
+  100% {transform:scale(1);opacity:1;}
+}
+
+.nanimate {
+  animation: noteanimate 1s;
+}
+/* Null is used as default note class prior to animation */
+.empty{}
+
+.guitar {
+  cursor: pointer;
+}
+
+.bells {
+  cursor: pointer;
+}
+
+@keyframes slidein {
+  0%   {transform:translateX(-250px);opacity:(0.25)}
+  100% {transform:translateX(0px);opacity:(1)}
+}
+
+.panimate{
+  animation: slidein 0.75s; 
+}
+
+.ganimate {
+  animation: slidein 1s;
+}
+
+.banimate{
+  animation: slidein 1.25s;
+}
+
+
+
+>>>>>>> Stashed changes
