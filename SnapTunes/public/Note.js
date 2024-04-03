@@ -128,8 +128,6 @@ class timeNote extends Note {
   }
   released() {
     this.selected = false;
-<<<<<<< Updated upstream
-=======
     this.className = "nanimate";
   /*
     this.animate(
@@ -144,7 +142,6 @@ class timeNote extends Note {
     },
   );*/
 
->>>>>>> Stashed changes
   }
   getBeat() {
     return this.bar.toString() + ":" + this.beat.toString();
