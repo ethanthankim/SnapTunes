@@ -5,7 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Keyboard</title>
     <link rel="stylesheet" href="./style.css" />
-    <button id="start" style="float: left">Start</button>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.js"></script>
+    <script src="shake.js"></script>
+    <script src="Note.js"></script>
+    <script src="Track.js"></script>
+    <script src="functions.js"></script>
+    <script src="script.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+
+  <header>
     <div id="playContainer">
       <button
         id="playBTN"
@@ -41,23 +51,20 @@
         Bells
       </button>
     </div>
+
+    <button id="start" style="float: left">Start</button>
+    <button id="Unsnap">Disconnect</button>
+    <!-- Legacy code for button-based snapping solutions -->
     <!-- <button id="Vconnect">Vertical Snap</button>
     <button id="Hconnect">Horizontal Snap</button> -->
-    <button id="Unsnap">Disconnect</button>
     <!-- <button id="disconnectTop">UnSnap Top</button>
     <button id="disconnectBottom">UnSnap Bottom</button>
     <button id="disconnectRight">UnSnap Right</button>
     <button id="disconnectLeft">UnSnap Left</button> -->
-  </head>
+
+  </header>
+
   <body>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.js"></script>
-    <script src="shake.js"></script>
-    <script src="Note.js"></script>
-    <script src="Track.js"></script>
-    <script src="functions.js"></script>
-    <script src="script.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
     <script>
         var socket = io();
 
@@ -70,7 +77,6 @@
             socket.emit('Reset');
           }
         });
-
         if ('DeviceMotionEvent' in window) {
           // Device motion events are supported
           console.log('Device motion events are supported');
