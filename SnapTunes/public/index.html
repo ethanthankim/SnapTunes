@@ -23,7 +23,7 @@
         value="piano"
         onclick="getIcon(this.value)"
         style="width: 100%"
-        class="piano"
+        class="piano panimate"
       >
         Piano
       </button>
@@ -34,6 +34,7 @@
         value="guitar"
         onclick="getIcon(this.value)"
         style="width: 100%"
+        class="ganimate guitar"
       >
         Guitar
       </button>
@@ -44,6 +45,7 @@
         value="bells"
         onclick="getIcon(this.value)"
         style="width: 100%"
+        class="banimate bells"
       >
         Bells
       </button>
@@ -96,7 +98,7 @@
           
           if (swipe != null) {
             console.log('edge swipe!')
-            socket.emit("edgeSwipe", {melody:getMelody(snapped),id:socket.id,
+            socket.emit("Snap", {melody:getMelody(snapped),id:socket.id,
             songSection:getSongSection(),partners:partners, swipe: swipe});
           }
         });
@@ -205,6 +207,12 @@
           
           snappedMelody = constructMelody(Melodies, true, differences);
           snapped = true;
+          for (var side in partners) {
+            if (partners[side] != null) {
+              socket.emit('Update', {sender: socket.id, recipient: partners[side], partner: side, 
+                newSection:mySection, newMelody:snappedMelody, senderMelody:myMelody});
+            };
+          }
         });
         socket.on('Top',function(partnerID){
           partners.top = partnerID;

@@ -10,6 +10,7 @@ var blackHeight = whiteHeight / 2;
 var whiteWidth = 100;
 var blackWidth = 0.55 * whiteWidth;
 var colours = [255, 255, 255];
+var colour = '';
 var templates = [];
 
 var myMelody = new Melody([]);
@@ -64,23 +65,23 @@ function update(n, newMelody) {
 }
 function getIcon(value) {
   if (value == "piano") {
-    var imageString = `<image src="instrument_icons/piano.png" class="instrument"></image>`;
+    var imageString = `<image src="instrument_icons/piano.svg" class="instrument"></image>`;
     colours[0] = 255;
     colours[1] = 204;
     colours[2] = 0;
   } else if (value == "guitar") {
-    var imageString = `<image src="instrument_icons/guitar.png" class="instrument"></image>`;
+    var imageString = `<image src="instrument_icons/electric-guitar.svg" class="instrument"></image>`;
     colours[0] = 255;
     colours[1] = 0;
     colours[2] = 0;
   } else if (value == "bells") {
-    var imageString = `<image src="instrument_icons/bells.png" class="instrument"></image>`;
+    var imageString = `<image src="instrument_icons/bells.svg" class="instrument"></image>`;
     colours[0] = 255;
     colours[1] = 192;
     colours[2] = 203;
   }
   document.getElementById("icon").innerHTML = imageString;
-  var colour =
+  colour =
     `rgb(` +
     colours[0].toString() +
     `,` +
@@ -88,8 +89,22 @@ function getIcon(value) {
     `,` +
     colours[2].toString() +
     `)`;
+  colourcheck();
+}
+function colourcheck() {
   var playbtn = document.getElementById("playBTN");
-  playbtn.style.backgroundColor = colour;
+  playbtn.classList.remove("play");
+  if (colour == 'rgb(255,204,0)') {
+    playbtn.classList.add("yellow");}
+  if (colour == 'rgb(255,0,0)') {
+    playbtn.classList.add("red");
+  }
+  if (colour == 'rgb(255,192,203)') {
+    playbtn.classList.add("pink");
+  }
+  else {
+    playbtn.classList.add("play");
+  }
 }
 function setup() {
   createCanvas(canW + 10, canH + 200);
