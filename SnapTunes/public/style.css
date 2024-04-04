@@ -35,6 +35,10 @@
   box-shadow: 0 6px #165a057e;
 }
 
+.bgshift {
+  background-color: rgb(200, 37, 37);
+}
+
 .play:hover {
   background-color: #459147;
   transform: translateY(-2px);
@@ -45,6 +49,90 @@
 }
 
 .play:active {
+  background-color: #cf0a45;
+  box-shadow: 0 3px #666;
+  transform: translateY(9px);
+}
+
+.yellow {
+  float:left;
+  padding: 15px 10px;
+  font-size: 15px;
+  text-align: center;
+  cursor: pointer;
+  color: #fff;
+  background-color: rgb(196, 196, 75);
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 6px #4a5a057e;
+}
+
+.yellow:hover {
+  background-color: #def376;
+  transform: translateY(-2px);
+  transition:
+    transform
+    200ms
+    cubic-bezier(.3, .7, .4, 1.5);
+}
+
+.yellow:active {
+  background-color: #cf0a45;
+  box-shadow: 0 3px #666;
+  transform: translateY(9px);
+}
+
+.red {
+  float:left;
+  padding: 15px 10px;
+  font-size: 15px;
+  text-align: center;
+  cursor: pointer;
+  color: #fff;
+  background-color: rgb(192, 36, 36);
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 6px #2e03037e;
+}
+
+.red:hover {
+  background-color: #f30909;
+  transform: translateY(-2px);
+  transition:
+    transform
+    200ms
+    cubic-bezier(.3, .7, .4, 1.5);
+}
+
+.red:active {
+  background-color: #cf0a45;
+  box-shadow: 0 3px #666;
+  transform: translateY(9px);
+}
+
+.pink {
+  float:left;
+  padding: 15px 10px;
+  font-size: 15px;
+  text-align: center;
+  cursor: pointer;
+  color: #fff;
+  background-color: rgb(235, 131, 204);
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 6px #2e03037e;
+}
+
+.pink:hover {
+  background-color: #d047a2;
+  transform: translateY(-2px);
+  transition:
+    transform
+    200ms
+    cubic-bezier(.3, .7, .4, 1.5);
+}
+
+.pink:active {
   background-color: #cf0a45;
   box-shadow: 0 3px #666;
   transform: translateY(9px);

@@ -69,11 +69,15 @@ function switchButtons(isPlaying) {
   if (isPlaying) {
     button.setAttribute(`onclick`, `section.stop(); switchButtons(false)`);
     button.innerHTML = "Stop";
-    document.getElementById("playBTN").style.backgroundColor = "#cf0a45";
+    document.getElementById("playBTN").classList.add("bgshift");
+    document.getElementById("playBTN").classList.remove("yellow");
+    document.getElementById("playBTN").classList.remove("red");
+    document.getElementById("playBTN").classList.remove("pink");
   } else{
     button.setAttribute(`onclick`, `playMelody(myMelody, snappedMelody, snapped);switchButtons(true)`);
     button.innerHTML = "Play";
-    document.getElementById("playBTN").style.backgroundColor = "#04AA6D";
+    document.getElementById("playBTN").classList.remove("bgshift");
+    colourcheck();
   }
 }
 function constructMelody(melodies, isHorizontal, differences) {

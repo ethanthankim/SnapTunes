@@ -208,6 +208,7 @@ class templateNote extends timeNote {
     this.selected = false;
     this.x = this.x0;
     this.y = this.y0;
+    this.classList.add("nanimate");
   }
 }
 

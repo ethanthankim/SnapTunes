@@ -16,6 +16,7 @@ var myMelody = new Melody([]);
 let snappedMelody = new Melody([]);
 var snapped = false;
 var mySection=0;
+var colour = '';
 
 //client IDs of the clients that this device is connected to
 var partners = {top:null,bottom:null,right:null,left:null};
@@ -82,7 +83,7 @@ function getIcon(value) {
     colours[2] = 203;
   }
   document.getElementById("icon").innerHTML = imageString;
-  var colour =
+  colour =
     `rgb(` +
     colours[0].toString() +
     `,` +
@@ -90,9 +91,25 @@ function getIcon(value) {
     `,` +
     colours[2].toString() +
     `)`;
-  var playbtn = document.getElementById("playBTN");
-  playbtn.style.backgroundColor = colour;
+    colourcheck()
 }
+
+function colourcheck() {
+  var playbtn = document.getElementById("playBTN");
+  playbtn.classList.remove("play");
+  if (colour == 'rgb(255,204,0)') {
+    playbtn.classList.add("yellow");}
+  if (colour == 'rgb(255,0,0)') {
+    playbtn.classList.add("red");
+  }
+  if (colour == 'rgb(255,192,203)') {
+    playbtn.classList.add("pink");
+  }
+  else {
+    playbtn.classList.add("play");
+  }
+}
+
 function setup() {
   createCanvas(canW + 10, canH + 200);
   strokeWeight(5);
