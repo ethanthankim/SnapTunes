@@ -20,10 +20,11 @@ var mySection=0;
 //client IDs of the clients that this device is connected to
 var partners = {top:null,bottom:null,right:null,left:null};
 
+var startBTN = document.getElementById("start");
 var synth = new Tone.PolySynth().toDestination();
 // const synth = new Tone.Sampler({
 // 	urls: {
-// 		C4: "http://localhost:3000/audio/Piano_C3.mp3",
+// 		C4: "Piano_C3.mp3",
 //     D4: "Piano_D3.mp3",
 //     E4: "Piano_E3.mp3",
 //     F4: "Piano_F3.mp3",
@@ -31,15 +32,12 @@ var synth = new Tone.PolySynth().toDestination();
 //     A4: "Piano_A3.mp3",
 //     B4: "Piano_B3.mp3",
 // 	},
+// 	baseUrl: "https://www.cs.ryerson.ca/~jsmorris/piano/",
 // 	onload: () => {
 // 		sampler.triggerAttackRelease(["C1", "E1", "G1", "B1"], 0.5);
 // 	}
 // }).toDestination();
-// var synth = Tone.SampleLibrary.load({
-//   instruments: "piano"
-//   }).toDestination();
 
-var startBTN = document.getElementById("start");
 startBTN.addEventListener("click", function () {
   if (Tone.context.state != "running") {
     Tone.start();
