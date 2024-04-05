@@ -23,13 +23,13 @@
 }
 
 .play {
-  float:left;
+  float: left;
   padding: 15px 10px;
   font-size: 15px;
   text-align: center;
   cursor: pointer;
   color: #fff;
-  background-color: #04AA6D;
+  background-color: #04aa6d;
   border: none;
   border-radius: 15px;
   box-shadow: 0 6px #165a057e;
@@ -42,10 +42,7 @@
 .play:hover {
   /* background-color: #459147; */
   transform: translateY(-2px);
-  transition:
-    transform
-    200ms
-    cubic-bezier(.3, .7, .4, 1.5);
+  transition: transform 200ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
 }
 
 .play:active {
@@ -55,7 +52,7 @@
 }
 
 .yellow {
-  float:left;
+  float: left;
   padding: 15px 10px;
   font-size: 15px;
   text-align: center;
@@ -70,10 +67,7 @@
 .yellow:hover {
   background-color: #def376;
   transform: translateY(-2px);
-  transition:
-    transform
-    200ms
-    cubic-bezier(.3, .7, .4, 1.5);
+  transition: transform 200ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
 }
 
 .yellow:active {
@@ -83,7 +77,7 @@
 }
 
 .red {
-  float:left;
+  float: left;
   padding: 15px 10px;
   font-size: 15px;
   text-align: center;
@@ -98,10 +92,7 @@
 .red:hover {
   background-color: #f30909;
   transform: translateY(-2px);
-  transition:
-    transform
-    200ms
-    cubic-bezier(.3, .7, .4, 1.5);
+  transition: transform 200ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
 }
 
 .red:active {
@@ -111,7 +102,7 @@
 }
 
 .pink {
-  float:left;
+  float: left;
   padding: 15px 10px;
   font-size: 15px;
   text-align: center;
@@ -126,10 +117,7 @@
 .pink:hover {
   background-color: #d047a2;
   transform: translateY(-2px);
-  transition:
-    transform
-    200ms
-    cubic-bezier(.3, .7, .4, 1.5);
+  transition: transform 200ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
 }
 
 .pink:active {
@@ -142,13 +130,13 @@
   align-items: center;
   background-color: initial;
   background-image: linear-gradient(#333331, #22221f);
-  box-shadow:#d2d3d3 0px 1px 5px;
+  box-shadow: #d2d3d3 0px 1px 5px;
   text-transform: uppercase;
   border: 20px;
   box-sizing: border-box;
   color: #fff;
   cursor: pointer;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   font-size: 22px;
   height: 40px;
   justify-content: center;
@@ -162,10 +150,10 @@
 }
 
 .piano:hover {
-  color:black;
+  color: black;
   background-image: linear-gradient(#deeb31, #d1db06);
-  box-shadow: rgba(0, 1, 0, .2) 0 2px 8px;
-  opacity: .85;
+  box-shadow: rgba(0, 1, 0, 0.2) 0 2px 8px;
+  opacity: 0.85;
 }
 
 .piano:active {
@@ -177,22 +165,29 @@
 }
 
 @keyframes noteanimate {
-  0%   {transform:scale(1);}
-  50%  {transform:scale(0.5)}
-  100% {transform:scale(1);opacity:1;}
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.5);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .nanimate {
   animation: noteanimate 1s;
 }
 /* Null is used as default note class prior to animation */
-.empty{
+.empty {
   cursor: grab;
 }
 
 .guitar {
   align-self: center;
-  text-align:center;
+  text-align: center;
   background-color: #ca2020;
   background-image: none;
   background-position: 0 90%;
@@ -200,19 +195,19 @@
   border-radius: 15px 40px 42px 15px 15px 42px 40px 15px;
   border-style: solid;
   border-width: 2px;
-  border:20px;
-  box-shadow: rgba(0, 0, 0, .2) 15px 28px 25px -18px;
+  border: 20px;
+  box-shadow: rgba(0, 0, 0, 0.2) 15px 28px 25px -18px;
   box-sizing: border-box;
   color: #ebeae9;
   cursor: pointer;
   display: inline-block;
-  text-transform:uppercase;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  text-transform: uppercase;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   font-size: 22px;
-  letter-spacing:6px;
+  letter-spacing: 6px;
   line-height: 23px;
   outline: none;
-  padding: .75rem;
+  padding: 0.75rem;
   text-decoration: none;
   transition: all 235ms ease-in-out;
   border-bottom-left-radius: 15px 42px;
@@ -223,13 +218,12 @@
 }
 
 .guitar:hover {
-  box-shadow: rgba(0, 0, 0, .3) 2px 8px 8px -5px;
+  box-shadow: rgba(0, 0, 0, 0.3) 2px 8px 8px -5px;
   transform: translate3d(0, 2px, 0);
 }
 
 .guitar:focus {
-  box-shadow: rgba(0, 0, 0, .3) 2px 8px 4px -6px;
-
+  box-shadow: rgba(0, 0, 0, 0.3) 2px 8px 4px -6px;
 }
 
 .bells {
@@ -243,10 +237,15 @@
   border-radius: 10px;
   display: block;
   font-weight: 450;
-  font-size:22px;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 22px;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   box-shadow: 0px 0px 14px -7px #d80b0b;
-  background-image: linear-gradient(90deg, #6e17a88c 0%, #ee9cd5  51%, #974ac460  100%);
+  background-image: linear-gradient(
+    90deg,
+    #6e17a88c 0%,
+    #ee9cd5 51%,
+    #974ac460 100%
+  );
   cursor: pointer;
   letter-spacing: 6px;
   touch-action: manipulation;
@@ -262,18 +261,24 @@
 }
 
 @keyframes slidein {
-  0%   {transform:translateX(-250px);opacity:(0.25)}
-  100% {transform:translateX(0px);opacity:(1)}
+  0% {
+    transform: translateX(-250px);
+    opacity: (0.25);
+  }
+  100% {
+    transform: translateX(0px);
+    opacity: (1);
+  }
 }
 
-.panimate{
-  animation: slidein 0.75s; 
+.panimate {
+  animation: slidein 0.75s;
 }
 
 .ganimate {
   animation: slidein 1s;
 }
 
-.banimate{
+.banimate {
   animation: slidein 1.25s;
 }

@@ -1,68 +1,68 @@
 /* --- functions.js ---------------------------------------------------*/
 
 function barLines(x, y, width, height, bars) {
-    eighth = width / (bars * 8);
-    for (var i = 1; i < 16; i++) {
-      if (i % 8 == 0) {
-        stroke("black");
-        strokeWeight(5);
-      } else if (i % 2 == 0) {
-        stroke(90, 90, 90);
-        strokeWeight(2);
-      } else {
-        stroke("grey");
-        strokeWeight(1);
-      }
-      line(x + i * eighth, y, x + i * eighth, y + height);
+  eighth = width / (bars * 8);
+  for (var i = 1; i < 16; i++) {
+    if (i % 8 == 0) {
+      stroke("black");
+      strokeWeight(5);
+    } else if (i % 2 == 0) {
+      stroke(90, 90, 90);
+      strokeWeight(2);
+    } else {
+      stroke("grey");
+      strokeWeight(1);
+    }
+    line(x + i * eighth, y, x + i * eighth, y + height);
+  }
+}
+function displayBoard(keyboard, tracks, x, y, width, height) {
+  strokeWeight(5);
+  stroke("black");
+  fill(255, 255, 255, 0);
+  rect(x - 2, y - 2, width, height + 5);
+  textSize(16);
+  for (var i = 0; i < keyboard.length; i++) {
+    var key = keyboard[i];
+    key.show();
+    if (key.note.includes("#")) {
+      fill("white");
+      text(key.note, key.x + key.w / 2, key.y + key.h / 2);
+    } else {
+      fill("black");
+      text(key.note, key.x + key.w * (3 / 4), key.y + key.h / 2);
     }
   }
-  function displayBoard(keyboard, tracks, x, y, width, height) {
-    strokeWeight(5);
-    stroke("black");
-    fill(255, 255, 255, 0);
-    rect(x - 2, y - 2, width, height + 5);
-    textSize(16);
-    for (var i = 0; i < keyboard.length; i++) {
-      var key = keyboard[i];
-      key.show();
-      if (key.note.includes("#")) {
-        fill("white");
-        text(key.note, key.x + key.w / 2, key.y + key.h / 2);
-      } else {
-        fill("black");
-        text(key.note, key.x + key.w * (3 / 4), key.y + key.h / 2);
-      }
-    }
-    for (var j = 0; j < tracks.length; j++) {
-      tracks[j].show();
+  for (var j = 0; j < tracks.length; j++) {
+    tracks[j].show();
+  }
+}
+function displayNotes(notesList) {
+  for (var i = 0; i < notesList.length; i++) {
+    var note = notesList[i];
+    note.update();
+    note.over();
+    note.show();
+  }
+}
+function createNote(tracks, tNote, melody, colours) {
+  // melody is of class Melody
+  for (var i = 0; i < tracks.length; i++) {
+    if (tNote.inTrack(tracks[i])) {
+      var newNote = new timeNote(
+        tracks[i].note,
+        tNote.x,
+        tNote.y,
+        tracks[i].w,
+        tNote.bars,
+        tNote.type,
+        colours
+      );
+      newNote.setBeat(tracks);
+      melody.addNote(newNote);
     }
   }
-  function displayNotes(notesList) {
-    for (var i = 0; i < notesList.length; i++) {
-      var note = notesList[i];
-      note.update();
-      note.over();
-      note.show();
-    }
-  }
-  function createNote(tracks, tNote, melody, colours) {
-    // melody is of class Melody
-    for (var i = 0; i < tracks.length; i++) {
-      if (tNote.inTrack(tracks[i])) {
-        var newNote = new timeNote(
-          tracks[i].note,
-          tNote.x,
-          tNote.y,
-          tracks[i].w,
-          tNote.bars,
-          tNote.type,
-          colours
-        );
-        newNote.setBeat(tracks);
-        melody.addNote(newNote);
-      }
-    }
-  }
+}
 function switchButtons(isPlaying) {
   var button = document.getElementById("playBTN");
   if (isPlaying) {
@@ -72,8 +72,11 @@ function switchButtons(isPlaying) {
     document.getElementById("playBTN").classList.remove("yellow");
     document.getElementById("playBTN").classList.remove("red");
     document.getElementById("playBTN").classList.remove("pink");
-  } else{
-    button.setAttribute(`onclick`, `playMelody(myMelody, snappedMelody, snapped);switchButtons(true)`);
+  } else {
+    button.setAttribute(
+      `onclick`,
+      `playMelody(myMelody, snappedMelody, snapped);switchButtons(true)`
+    );
     button.innerHTML = "Play";
     document.getElementById("playBTN").classList.remove("bgshift");
     colourcheck();
@@ -89,16 +92,15 @@ function constructMelody(melodies, isHorizontal, differences) {
 
   //sections is array of two ints indicating the sections that were snapped.
   let first = reconstructMelody(melodies[0]);
-  first = shiftMelody(first,differences[0]);
+  first = shiftMelody(first, differences[0]);
   let second = reconstructMelody(melodies[1]);
   second = shiftMelody(second, differences[1]);
   first.addMelody(second);
 
   if (isHorizontal) {
     first.length = melodies[0].length + melodies[1].length;
-  }
-  else {
-    first.length = Math.max(melodies[0].length,melodies[1].length);
+  } else {
+    first.length = Math.max(melodies[0].length, melodies[1].length);
   }
   first.numSections = melodies[0].numSections + melodies[1].numSections;
   console.log("New melody: ", first);
@@ -112,19 +114,19 @@ function reconstructMelody(melody) {
   let reconstructedNotes = [];
   for (var note of melody.notes) {
     // call the simple constructor of timeNote
-    reconstructedNotes.push(new timeNote(note.note,note.type,note.bar,note.beat));
+    reconstructedNotes.push(
+      new timeNote(note.note, note.type, note.bar, note.beat)
+    );
   }
   let reconstructed = new Melody(reconstructedNotes);
   reconstructed.numSections = melody.numSections;
   return reconstructed;
 }
-function playMelody(myMelody,snappedMelody=[],isSnapped=false) {
-  console.log(snappedMelody);
+function playMelody(myMelody, snappedMelody = [], isSnapped = false) {
   let melody;
-  if (isSnapped){
+  if (isSnapped) {
     melody = snappedMelody;
-  }
-  else {
+  } else {
     melody = myMelody;
   }
   section = new Tone.Part((time, section) => {
@@ -135,17 +137,25 @@ function playMelody(myMelody,snappedMelody=[],isSnapped=false) {
   switchButtons(true);
   setTimeout(function () {
     switchButtons(false);
-  }, melody.length*5000);
+  }, melody.length * 5000);
 }
 
-function shiftMelody(melody, diff=0) {
+function shiftMelody(melody, diff = 0) {
   // melody is of class Melody
   // shift will return new melody in which each note's beat is shifted by 2*diff bars
   let newNotes = [];
   for (note of melody.notes) {
-    var newBar = note.bar + 2*diff;
-    var newNote = new timeNote(note.note,note.type,newBar, note.beat);
+    var newBar = note.bar + 2 * diff;
+    var newNote = new timeNote(note.note, note.type, newBar, note.beat);
     newNotes.push(newNote);
   }
   return new Melody(newNotes);
+}
+
+function switchBackground(isSnapped) {
+  if (isSnapped) {
+    document.body.style = `background-color: rgb(0,150,255);`;
+  } else {
+    document.body.style = `background-color: white;`;
+  }
 }

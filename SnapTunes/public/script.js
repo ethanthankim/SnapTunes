@@ -10,18 +10,17 @@ var blackHeight = whiteHeight / 2;
 var whiteWidth = 100;
 var blackWidth = 0.55 * whiteWidth;
 var colours = [255, 255, 255];
-var colour = '';
+var colour = "";
 var templates = [];
 
 var myMelody = new Melody([]);
 let snappedMelody = new Melody([]);
 var snapped = false;
-var mySection=0;
+var mySection = 0;
 
 //client IDs of the clients that this device is connected to
-var partners = {top:null,bottom:null,right:null,left:null};
+var partners = { top: null, bottom: null, right: null, left: null };
 
-var startBTN = document.getElementById("start");
 var synth = new Tone.PolySynth().toDestination();
 // const synth = new Tone.Sampler({
 // 	urls: {
@@ -33,23 +32,22 @@ var synth = new Tone.PolySynth().toDestination();
 //     A4: "Piano_A3.mp3",
 //     B4: "Piano_B3.mp3",
 // 	},
-// 	baseUrl: "https://www.cs.ryerson.ca/~jsmorris/piano/",
+// 	baseUrl: "https://localhost:3000/audio/",
 // 	onload: () => {
 // 		sampler.triggerAttackRelease(["C1", "E1", "G1", "B1"], 0.5);
 // 	}
 // }).toDestination();
 
-startBTN.addEventListener("click", function () {
+document.getElementById("start").addEventListener("click", function () {
   if (Tone.context.state != "running") {
     Tone.start();
   }
 });
 
-function getMelody(isSnapped=false) {
-  if (isSnapped){
+function getMelody(isSnapped = false) {
+  if (isSnapped) {
     return snappedMelody;
-  }
-  else {
+  } else {
     return myMelody;
   }
 }
@@ -94,15 +92,15 @@ function getIcon(value) {
 function colourcheck() {
   var playbtn = document.getElementById("playBTN");
   playbtn.classList.remove("play");
-  if (colour == 'rgb(255,204,0)') {
-    playbtn.classList.add("yellow");}
-  if (colour == 'rgb(255,0,0)') {
+  if (colour == "rgb(255,204,0)") {
+    playbtn.classList.add("yellow");
+  }
+  if (colour == "rgb(255,0,0)") {
     playbtn.classList.add("red");
   }
-  if (colour == 'rgb(255,192,203)') {
+  if (colour == "rgb(255,192,203)") {
     playbtn.classList.add("pink");
-  }
-  else {
+  } else {
     playbtn.classList.add("play");
   }
 }
@@ -205,8 +203,3 @@ function touchEnded() {
 }
 synth.sync();
 Tone.Transport.start();
-
-
-
-
-
