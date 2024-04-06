@@ -21,23 +21,7 @@ var mySection = 0;
 //client IDs of the clients that this device is connected to
 var partners = { top: null, bottom: null, right: null, left: null };
 
-// var synth = new Tone.PolySynth().toDestination();
-const synth = new Tone.Sampler({
-	urls: {
-		C4: "Piano_C3.mp3",
-    D4: "Piano_D3.mp3",
-    E4: "Piano_E3.mp3",
-    F4: "Piano_F3.mp3",
-    G4: "Piano_G3.mp3",
-    A4: "Piano_A3.mp3",
-    B4: "Piano_B3.mp3",
-	},
- // Must switch out ip address when needed
-	baseUrl: "https://192.168.0.100:3000/audio/",
-	onload: () => {
-		sampler.triggerAttackRelease(["C1", "E1", "G1", "B1"], 0.5);
-	}
-}).toDestination();
+var synth = new Tone.PolySynth().toDestination();
 
 document.getElementById("start").addEventListener("click", function () {
   if (Tone.context.state != "running") {
@@ -62,6 +46,32 @@ function update(n, newMelody) {
   setSongSection(n);
   snappedMelody = reconstructMelody(newMelody);
 }
+
+function setSynth(instrument) {
+  let format;
+  if (instrument == "piano"){
+    format = ".mp3";
+  } else {
+    format = ".wav";
+  }
+  synth = new Tone.Sampler({
+    urls: {
+      C4: instrument + "_C3" + format,
+      D4: instrument + "_D3" + format,
+      E4: instrument + "_E3" + format,
+      F4: instrument + "_F3" + format,
+      G4: instrument + "_G3" + format,
+      A4: instrument + "_A3" + format,
+      B4: instrument + "_B3" + format,
+    },
+   // Must switch out ip address when needed
+    baseUrl: "https://172.20.10.5:3000/audio/" + instrument + "/",
+    onload: () => {
+      sampler.triggerAttackRelease(["C1", "E1", "G1", "B1"], 0.5);
+    }
+  }).toDestination();
+}
+
 function getIcon(value) {
   if (value == "piano") {
     var imageString = `<image src="instrument_icons/piano.svg" class="instrument"></image>`;
@@ -79,6 +89,7 @@ function getIcon(value) {
     colours[1] = 192;
     colours[2] = 203;
   }
+  setSynth(value);
   document.getElementById("icon").innerHTML = imageString;
   colour =
     `rgb(` +

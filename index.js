@@ -6,8 +6,8 @@ const path = require("path");
 
 const options = {
   // must first run mkcert <ipaddress>, then replace these
-  key: fs.readFileSync(path.join(__dirname, "certificates", "./192.168.0.100-key.pem")),
-  cert: fs.readFileSync(path.join(__dirname, "certificates", "./192.168.0.100.pem"))
+  key: fs.readFileSync(path.join(__dirname, "certificates", "./172.20.10.5-key.pem")),
+  cert: fs.readFileSync(path.join(__dirname, "certificates", "./172.20.10.5.pem"))
 };
 
 const server = https.createServer(options, app);
