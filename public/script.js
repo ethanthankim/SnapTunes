@@ -65,7 +65,7 @@ function setSynth(instrument) {
       B4: instrument + "_B3" + format,
     },
    // Must switch out ip address when needed
-    baseUrl: "https://172.20.10.5:3000/audio/" + instrument + "/",
+    baseUrl: "https://192.168.0.100:3000/audio/" + instrument + "/",
     onload: () => {
       sampler.triggerAttackRelease(["C1", "E1", "G1", "B1"], 0.5);
     }

@@ -139,37 +139,7 @@
           });
         }
       });
-      // document.getElementById('Vconnect').addEventListener('click',function(){
-      //   socket.emit('Vsnap',{melody:getMelody(snapped),id:socket.id,songSection:getSongSection()});
-      // });
-      // document.getElementById('Hconnect').addEventListener('click',function(){
-      //   socket.emit('Hsnap',{melody:getMelody(snapped),id:socket.id,songSection:getSongSection()});
-      // });
-      // document.getElementById('disconnectTop').addEventListener('click',function(){
-      //   if (partners.top != null){
-      //     socket.emit('Unsnap', {recipient: partners.top,id:socket.id,side:'bottom'});
-      //   }
-      // });
-      // document.getElementById('disconnectBottom').addEventListener('click',function(){
-      //   if (partners.bottom != null){
-      //     socket.emit('Unsnap', {recipient: partners.bottom,id:socket.id,side:'top'});
-      //   }
-      // });
-      // document.getElementById('disconnectRight').addEventListener('click',function(){
-      //   if (partners.right != null){
-      //     socket.emit('Unsnap', {recipient: partners.right,id:socket.id,side:'left'});
-      //   }
-      // });
-      // document.getElementById('disconnectLeft').addEventListener('click',function(){
-      //   if (partners.left != null){
-      //     socket.emit('Unsnap', {recipient: partners.left,id:socket.id,side:'right'});
-      //   }
-      // });
 
-      // window.addEventListener('shake', function(){
-      //   console.log("Shake detected");
-      //   socket.emit('Reset');
-      // },false);
       document.getElementById("Unsnap").addEventListener("click", () => {
         socket.emit("Reset");
       });
@@ -275,47 +245,47 @@
           }
         }
       });
-      socket.on("Unsnap", function (data) {
-        let { formerPartner, mySide } = data;
-        var nullPartners = 0;
-        for (var side in partners) {
-          if (partners[side] == formerPartner) {
-            partners[side] = null;
-          }
-          if (partners[side] == null) {
-            nullPartners += 1;
-          }
-        }
-        if (nullPartners == 4) {
-          snapped = false;
-        }
-        socket.emit("Resnap", {
-          id: socket.id,
-          partners: partners,
-          melody: myMelody,
-          side: mySide,
-          section: mySection,
-          total: snappedMelody.numSections,
-        });
-      });
-      socket.on("Resnap", function (side) {
-        socket.emit("Resnap", {
-          id: socket.id,
-          partners: partners,
-          melody: myMelody,
-          side: side,
-          section: mySection,
-          total: snappedMelody.numSections,
-        });
-      });
-      socket.on("Remove", function (data) {
-        console.log("Got here");
-        let { melody, section } = data;
-        let melodyToRemove = shiftMelody(reconstructMelody(melody), section);
-        snappedMelody = snappedMelody.removeMelody(melodyToRemove);
-        snappedMelody.numSections -= 1;
-        console.log(snappedMelody);
-      });
+      /* Attempted Unsnapping interaction that did not end up working */
+      // socket.on("Unsnap", function (data) {
+      //   let { formerPartner, mySide } = data;
+      //   var nullPartners = 0;
+      //   for (var side in partners) {
+      //     if (partners[side] == formerPartner) {
+      //       partners[side] = null;
+      //     }
+      //     if (partners[side] == null) {
+      //       nullPartners += 1;
+      //     }
+      //   }
+      //   if (nullPartners == 4) {
+      //     snapped = false;
+      //   }
+      //   socket.emit("Resnap", {
+      //     id: socket.id,
+      //     partners: partners,
+      //     melody: myMelody,
+      //     side: mySide,
+      //     section: mySection,
+      //     total: snappedMelody.numSections,
+      //   });
+      // });
+      // socket.on("Resnap", function (side) {
+      //   socket.emit("Resnap", {
+      //     id: socket.id,
+      //     partners: partners,
+      //     melody: myMelody,
+      //     side: side,
+      //     section: mySection,
+      //     total: snappedMelody.numSections,
+      //   });
+      // });
+      // socket.on("Remove", function (data) {
+      //   let { melody, section } = data;
+      //   let melodyToRemove = shiftMelody(reconstructMelody(melody), section);
+      //   snappedMelody = snappedMelody.removeMelody(melodyToRemove);
+      //   snappedMelody.numSections -= 1;
+      //   console.log(snappedMelody);
+      // });
     </script>
   </body>
 </html>

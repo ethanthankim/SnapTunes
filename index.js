@@ -4,10 +4,13 @@ const https = require("https");
 const fs = require('fs');
 const path = require("path");
 
+// Replace with ip address of device where the server is being run
+const ip = "192.168.0.100";
+
 const options = {
-  // must first run mkcert <ipaddress>, then replace these
-  key: fs.readFileSync(path.join(__dirname, "certificates", "./172.20.10.5-key.pem")),
-  cert: fs.readFileSync(path.join(__dirname, "certificates", "./172.20.10.5.pem"))
+  // run mkcert <ipaddress>, then move resulting -key.pem and .pem files to certificates directory
+  key: fs.readFileSync(path.join(__dirname, "certificates", ip + "-key.pem")),
+  cert: fs.readFileSync(path.join(__dirname, "certificates", ip + ".pem"))
 };
 
 const server = https.createServer(options, app);
@@ -65,6 +68,7 @@ io.on("connection", (socket) => {
   //     }
   // });
   socket.on("Update", (data) => {
+    // When snap occurs and the group melody changes, the change must be propagated to all devices that are snapped
     let { sender, recipient, partner, newSection, newMelody, senderMelody } =
       data;
     // if partner is top or bottom, newSection can stay the same
@@ -79,6 +83,7 @@ io.on("connection", (socket) => {
       newMelody: newMelody,
     });
   });
+  /* Attempted Unsnapping interaction that did not end up working*/
   // socket.on('Unsnap',(data)=>{
   //     unsnapPair.push(data);
   //     if (unsnapPair.length == 2){
