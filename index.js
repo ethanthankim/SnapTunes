@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require("path");
 
 // Replace with ip address of device where the server is being run
-const ip = "192.168.0.100";
+const ip = "10.0.1.131";
 
 const options = {
   // run mkcert <ipaddress>, then move resulting -key.pem and .pem files to certificates directory

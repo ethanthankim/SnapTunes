@@ -21,6 +21,9 @@ var mySection = 0;
 //client IDs of the clients that this device is connected to
 var partners = { top: null, bottom: null, right: null, left: null };
 
+// ip address of device hosting the server
+const ip = "10.0.1.131";
+
 var synth = new Tone.PolySynth().toDestination();
 
 document.getElementById("start").addEventListener("click", function () {
@@ -65,7 +68,7 @@ function setSynth(instrument) {
       B4: instrument + "_B3" + format,
     },
    // Must switch out ip address when needed
-    baseUrl: "https://192.168.0.100:3000/audio/" + instrument + "/",
+    baseUrl: "https://" + ip + ":3000/audio/" + instrument + "/",
     onload: () => {
       sampler.triggerAttackRelease(["C1", "E1", "G1", "B1"], 0.5);
     }
